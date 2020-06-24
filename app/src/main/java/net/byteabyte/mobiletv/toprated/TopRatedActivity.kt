@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_top_rated_shows.*
 import net.byteabyte.mobiletv.R
 import net.byteabyte.mobiletv.core.tvshows.Show
 
@@ -13,25 +14,24 @@ import net.byteabyte.mobiletv.core.tvshows.Show
 class TopRatedActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<TopRatedViewModel>()
+    private val showsAdapter = TopRatedAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_top_rated_shows)
 
+        configureRecyclerView()
         observeViewModel()
     }
 
-    private fun observeViewModel() {
-        viewModel.shows.observe(this, Observer { shows ->
-            when (shows) {
-                is TopRatedViewModel.TopRatedShowsState.ShowsAvailable -> renderShows(shows.shows)
-                is TopRatedViewModel.TopRatedShowsState.Error -> renderShowsError()
-            }
-        })
+    private fun configureRecyclerView() {
+        topRatedShowsRecyclerView.adapter = showsAdapter
     }
 
-    private fun renderShows(shows: List<Show>) {
-        Toast.makeText(this, "Got: $shows", Toast.LENGTH_SHORT).show()
+    private fun observeViewModel() {
+        viewModel.topRatedShows.observe(this, Observer { shows ->
+            showsAdapter.submitList(shows)
+        })
     }
 
     private fun renderShowsError() {

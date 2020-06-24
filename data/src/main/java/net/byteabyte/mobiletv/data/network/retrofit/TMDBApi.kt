@@ -6,5 +6,8 @@ import retrofit2.http.Query
 
 interface TMDBApi {
     @GET("/3/tv/top_rated")
-    suspend fun topRatedTvShows(@Query("api_key") apiKey: String): JsonTopRatedShowsResult
+    suspend fun topRatedTvShows(
+        @Query("api_key") apiKey: String,
+        @Query("page") pageNumber: Int
+    ): JsonTopRatedShowsResult
 }
