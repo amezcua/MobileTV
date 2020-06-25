@@ -5,7 +5,7 @@ import net.byteabyte.mobiletv.data.network.retrofit.InvalidApiResponseException
 import net.byteabyte.mobiletv.data.network.top_rated.TopRatedTvShow
 import java.lang.Exception
 
-data class JsonTopRatedResult(
+data class JsonTopRatedResponse(
     @Json(name = "id") val id: Int?,
     @Json(name = "name") val name: String?,
     @Json(name = "overview") val overview: String?,
@@ -18,7 +18,7 @@ data class JsonTopRatedResult(
 ) {
     // Only null checks are done here (captured in a layer above when parsing it instead of
     // letting the json serializer fail)
-    fun toTopRatedShow(): TopRatedTvShow =
+    internal fun toTopRatedShow(): TopRatedTvShow =
         try {
             TopRatedTvShow(
                 id = this.id!!,

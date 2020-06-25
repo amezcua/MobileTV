@@ -1,6 +1,6 @@
 package net.byteabyte.mobiletv.data.network.top_rated
 
-data class TopRatedResponsePage(
+internal data class TopRatedResponsePage(
     val totalPages: Int,
     val totalResults: Int,
     val page: Int,
