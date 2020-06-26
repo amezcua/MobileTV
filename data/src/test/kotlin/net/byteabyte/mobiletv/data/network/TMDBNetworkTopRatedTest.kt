@@ -38,7 +38,7 @@ internal class TMDBNetworkTopRatedTest {
     }
 
     @Test
-    fun `A 400 API response on top rated returns api error`() = runBlockingTest {
+    fun `A 400 API response returns api error`() = runBlockingTest {
         val error = a400Error()
         whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
 
@@ -48,7 +48,7 @@ internal class TMDBNetworkTopRatedTest {
     }
 
     @Test
-    fun `A 401 API response on top rated returns unauthorized`() = runBlockingTest {
+    fun `A 401 API response returns unauthorized`() = runBlockingTest {
         val error = a401Error()
         whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
 
@@ -58,7 +58,7 @@ internal class TMDBNetworkTopRatedTest {
     }
 
     @Test
-    fun `A 500 API response on top rated returns server error`() = runBlockingTest {
+    fun `A 500 API response returns server error`() = runBlockingTest {
         val error = a500Error()
         whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
 
@@ -68,7 +68,7 @@ internal class TMDBNetworkTopRatedTest {
     }
 
     @Test
-    fun `An unknown error on top rated returns server error`() = runBlockingTest {
+    fun `An unknown error returns server error`() = runBlockingTest {
         val error = RuntimeException()
         whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
 
@@ -97,7 +97,7 @@ internal class TMDBNetworkTopRatedTest {
         val validResponse = aValidJsonTopRatedShowsResult()
         whenever(tmdbApi.topRatedTvShows(any(), any())).thenReturn(validResponse)
 
-        val responsePage = (buildTmdbNetwork(tmdbApi).requestTopRated(1) as Success).response
+        val responsePage = (buildTmdbNetwork(tmdbApi).requestTopRated(1) as Success).data
 
         assertEquals(responsePage.page, validResponse.page)
         assertEquals(responsePage.totalPages, validResponse.totalPages)

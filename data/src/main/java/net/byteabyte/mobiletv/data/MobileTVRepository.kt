@@ -1,7 +1,10 @@
 package net.byteabyte.mobiletv.data
 
 import net.byteabyte.mobiletv.core.Repository
-import net.byteabyte.mobiletv.core.Repository.TopRatedResult
+import net.byteabyte.mobiletv.core.Repository.*
+import net.byteabyte.mobiletv.core.tvshows.ShowId
+import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import net.byteabyte.mobiletv.data.network.TMDBNetwork
 import net.byteabyte.mobiletv.data.network.TMDBNetworkResponse.*
 import net.byteabyte.mobiletv.data.network.imagesconfiguration.ImagesConfigurationNetwork
@@ -11,27 +14,45 @@ class MobileTVRepository @Inject constructor(private val tmdbNetwork: TMDBNetwor
 
     private var imagesConfigurationNetwork: ImagesConfigurationNetwork? = null
 
-    override suspend fun getTopRated(pageNumber: Int): TopRatedResult {
+    override suspend fun getTopRated(pageNumber: Int): RepositoryResult<PagedResult<TopRatedShow>> {
         if(imagesConfigurationNetwork == null) {
             when (val response = tmdbNetwork.requestImagesConfiguration()) {
-                Unauthorised -> return TopRatedResult.Error.AuthenticationError
-                is ApiError -> return TopRatedResult.Error.ServerError(response.error)
-                is ServerError -> return TopRatedResult.Error.ServerError(response.error)
-                is Success -> imagesConfigurationNetwork = response.response
+                Unauthorised -> return RepositoryResult.Error.AuthenticationError
+                is ApiError -> return RepositoryResult.Error.ServerError(response.error)
+                is ServerError -> return RepositoryResult.Error.ServerError(response.error)
+                is Success -> imagesConfigurationNetwork = response.data
             }
         }
 
-        return when (val result = tmdbNetwork.requestTopRated(pageNumber)) {
+        return when (val topRated = tmdbNetwork.requestTopRated(pageNumber)) {
             is Success -> {
-                val shows = result.response.shows.map { it.toShow(imagesConfigurationNetwork!!) }
-                val page = result.response.page
-                val showsCount = result.response.totalResults
-                val pagesCount = result.response.totalPages
-                TopRatedResult.Success(page, showsCount, pagesCount, shows)
+                val shows = topRated.data.shows.map { it.toShow(imagesConfigurationNetwork!!) }
+                val page = topRated.data.page
+                val showsCount = topRated.data.totalResults
+                val pagesCount = topRated.data.totalPages
+                RepositoryResult.Success(PagedResult(page, showsCount, pagesCount, shows))
             }
-            is Unauthorised -> TopRatedResult.Error.AuthenticationError
-            is ApiError -> TopRatedResult.Error.ServerError(result.error)
-            is ServerError -> TopRatedResult.Error.ServerError(result.error)
+            is Unauthorised -> RepositoryResult.Error.AuthenticationError
+            is ApiError -> RepositoryResult.Error.ServerError(topRated.error)
+            is ServerError -> RepositoryResult.Error.ServerError(topRated.error)
+        }
+    }
+
+    override suspend fun getShowDetails(showId: ShowId): RepositoryResult<ShowDetails> {
+        if(imagesConfigurationNetwork == null) {
+            when (val response = tmdbNetwork.requestImagesConfiguration()) {
+                is Unauthorised -> return RepositoryResult.Error.AuthenticationError
+                is ApiError -> return RepositoryResult.Error.ServerError(response.error)
+                is ServerError -> return RepositoryResult.Error.ServerError(response.error)
+                is Success -> imagesConfigurationNetwork = response.data
+            }
+        }
+
+        return when (val tmdbNetworkResponse = tmdbNetwork.requestShowDetails(showId)) {
+            is Unauthorised -> RepositoryResult.Error.AuthenticationError
+            is ApiError -> RepositoryResult.Error.ServerError(tmdbNetworkResponse.error)
+            is ServerError -> RepositoryResult.Error.ServerError(tmdbNetworkResponse.error)
+            is Success -> RepositoryResult.Success(tmdbNetworkResponse.data.toShowDetails(imagesConfigurationNetwork!!))
         }
     }
 }

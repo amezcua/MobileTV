@@ -2,7 +2,7 @@ package net.byteabyte.mobiletv.data.network.retrofit.top_rated
 
 import com.squareup.moshi.Json
 import net.byteabyte.mobiletv.data.network.retrofit.InvalidApiResponseException
-import net.byteabyte.mobiletv.data.network.top_rated.TopRatedTvShow
+import net.byteabyte.mobiletv.data.network.top_rated.TopRatedNetworkShow
 import java.lang.Exception
 
 data class JsonTopRatedResponse(
@@ -18,9 +18,9 @@ data class JsonTopRatedResponse(
 ) {
     // Only null checks are done here (captured in a layer above when parsing it instead of
     // letting the json serializer fail)
-    internal fun toTopRatedShow(): TopRatedTvShow =
+    internal fun toTopRatedShow(): TopRatedNetworkShow =
         try {
-            TopRatedTvShow(
+            TopRatedNetworkShow(
                 id = this.id!!,
                 name = this.name!!,
                 description = this.overview ?: "",

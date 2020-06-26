@@ -2,6 +2,8 @@ package net.byteabyte.mobiletv.core.tvshows
 
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.Location.TOP_RATED_LIST_BG
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
+import net.byteabyte.mobiletv.core.tvshows.top_rated.ImagesMap
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -69,7 +71,7 @@ internal class ShowImagePickerImplTest {
     private fun aShow(
         backdropImages: ImagesMap = hashMapOf(),
         posterImages: ImagesMap = hashMapOf()
-    ) = Show(
+    ) = TopRatedShow(
         id = Random().nextInt(1000),
         name = "aName",
         description = "aDescription",

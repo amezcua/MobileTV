@@ -5,15 +5,16 @@ import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.Location.TOP_RATED_LI
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult.Image
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult.Placeholder
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import kotlin.math.abs
 
 internal class ShowImagePickerImpl : ShowImagePicker {
     override fun pickBestImage(
-        show: Show,
+        topRatedShow: TopRatedShow,
         location: Location,
         imageWidth: Pixels
     ): PickImageResult = when (location) {
-        TOP_RATED_LIST_BG -> pickInOrder(show.backdropImages, show.posterImages, imageWidth)
+        TOP_RATED_LIST_BG -> pickInOrder(topRatedShow.backdropImages, topRatedShow.posterImages, imageWidth)
     }
 
     private fun pickInOrder(

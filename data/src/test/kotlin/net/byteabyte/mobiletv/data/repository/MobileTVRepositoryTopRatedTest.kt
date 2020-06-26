@@ -1,4 +1,4 @@
-package net.byteabyte.mobiletv.data
+package net.byteabyte.mobiletv.data.repository
 
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
@@ -9,8 +9,9 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
-import net.byteabyte.mobiletv.core.Repository
-import net.byteabyte.mobiletv.core.Repository.TopRatedResult.Error
+import net.byteabyte.mobiletv.core.Repository.RepositoryResult
+import net.byteabyte.mobiletv.core.Repository.RepositoryResult.Error
+import net.byteabyte.mobiletv.data.MobileTVRepository
 import net.byteabyte.mobiletv.data.network.TMDBNetwork
 import net.byteabyte.mobiletv.data.network.TMDBNetworkResponse
 import net.byteabyte.mobiletv.data.network.TMDBNetworkResponse.Unauthorised
@@ -20,10 +21,9 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.lang.RuntimeException
 
 @ExperimentalCoroutinesApi
-internal class MobileTVRepositoryTest {
+internal class MobileTVRepositoryTopRatedTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private val tmdbNetwork: TMDBNetwork = mock()
@@ -107,13 +107,13 @@ internal class MobileTVRepositoryTest {
         whenever(tmdbNetwork.requestImagesConfiguration()).thenReturn(TMDBNetworkResponse.Success(configuration))
         whenever(tmdbNetwork.requestTopRated(any())).thenReturn(TMDBNetworkResponse.Success(topRatedPageResult))
 
-        val topRated = buildRepository().getTopRated(1) as Repository.TopRatedResult.Success
+        val topRated = buildRepository().getTopRated(1) as RepositoryResult.Success
 
-        assertEquals(topRatedPageResult.page, topRated.page)
-        assertEquals(topRatedPageResult.totalPages, topRated.pagesCount)
-        assertEquals(topRatedPageResult.totalResults, topRated.showsCount)
-        assertEquals(topRatedPageResult.shows.size, topRated.results.size)
-        topRated.results.forEach { show ->
+        assertEquals(topRatedPageResult.page, topRated.data.page)
+        assertEquals(topRatedPageResult.totalPages, topRated.data.pagesCount)
+        assertEquals(topRatedPageResult.totalResults, topRated.data.showsCount)
+        assertEquals(topRatedPageResult.shows.size, topRated.data.results.size)
+        topRated.data.results.forEach { show ->
             show.posterImages.forEach { posterImage ->
                 val posterUrl = topRatedPageResult.shows.first { it.id == show.id }.posterImage
                 assertEquals("${configuration.baseUrl}${posterImage.key}$posterUrl", posterImage.value)
@@ -126,5 +126,6 @@ internal class MobileTVRepositoryTest {
         }
     }
 
-    private fun buildRepository(): MobileTVRepository = MobileTVRepository(tmdbNetwork)
+    private fun buildRepository(): MobileTVRepository =
+        MobileTVRepository(tmdbNetwork)
 }

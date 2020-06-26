@@ -10,6 +10,9 @@ data class JsonConfigurationResponse(
         ImagesConfigurationNetwork(
             baseUrl = images.secureBaseUrl,
             backDropSizes = images.backDropSizes,
-            posterSizes = images.posterSizes
+            posterSizes = images.posterSizes,
+            profileSizes = images.profileSizes,
+            logoSizes = images.logoSizes,
+            stillSizes = images.stillSizes
         )
 }

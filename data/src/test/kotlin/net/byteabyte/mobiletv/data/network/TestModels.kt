@@ -6,8 +6,9 @@ import net.byteabyte.mobiletv.data.network.imagesconfiguration.ImagesConfigurati
 import net.byteabyte.mobiletv.data.network.retrofit.TMDBApi
 import net.byteabyte.mobiletv.data.network.retrofit.configuration.JsonConfigurationResponse
 import net.byteabyte.mobiletv.data.network.retrofit.configuration.JsonImagesConfiguration
+import net.byteabyte.mobiletv.data.network.show_details.*
 import net.byteabyte.mobiletv.data.network.top_rated.TopRatedResponsePage
-import net.byteabyte.mobiletv.data.network.top_rated.TopRatedTvShow
+import net.byteabyte.mobiletv.data.network.top_rated.TopRatedNetworkShow
 import retrofit2.HttpException
 import java.util.*
 
@@ -29,7 +30,7 @@ internal fun aTopRatedResponsePage() = TopRatedResponsePage(
     }
 )
 
-private fun aTopRatedShow(id: Int) = TopRatedTvShow(
+private fun aTopRatedShow(id: Int) = TopRatedNetworkShow(
     id = id,
     totalVotes = Random().nextInt(),
     rating = Random().nextDouble(),
@@ -55,3 +56,65 @@ private fun aValidJsonImagesConfiguration() = JsonImagesConfiguration(
         profileSizes = (0 until 5).map { UUID.randomUUID().toString() },
         stillSizes = (0 until 5).map { UUID.randomUUID().toString() }
     )
+
+fun aShowDetailsNetwork(id: Int = Random().nextInt()) = ShowDetailsNetwork(
+    id = id,
+    name = "aName",
+    backdropPath = "aBackdropPath",
+    authors = (0 until 10).map { anAuthorNetwork() },
+    runTimes = (0 until 10).map { it },
+    firstAirDate = "aDate", // TODO change to date
+    genres = (0 until 10).map { aGenreNetwork() },
+    homePageUrl = "aHomePage",
+    inProduction = Random().nextBoolean(),
+    languages = (0 until 10).map { "Lang: $it" },
+    lastEpisode = null,
+    nextEpisode = null,
+    networks = (0 until 10).map { aNetworkNetwork() },
+    episodesCount = Random().nextInt(100),
+    originCountries = (0 until 10).map { "Original country: $it" },
+    originalName = "anOriginalName",
+    description = "aDescription",
+    popularity = Random().nextDouble(),
+    posterPath = "aPosterPath",
+    productionCompanies = (0 until 10).map { aProductionCompanyNetwork() },
+    seasons = (0 until 10).map { aSeasonNetwork() },
+    status = "aStatus",
+    voteAverage = Random().nextDouble(),
+    totalVotes = Random().nextInt(1000)
+)
+
+private fun anAuthorNetwork(id: Int = Random().nextInt()) = ShowAuthorNetwork(
+    id = id,
+    name = "aName",
+    profileImage = "aProfileImageFor$id"
+)
+
+private fun aGenreNetwork(id: Int = Random().nextInt()) = GenreNetwork(
+    id = id,
+    name = "Name for genre: $id"
+)
+
+private fun aNetworkNetwork(id: Int = Random().nextInt()) = NetworkNetwork(
+    id = id,
+    name = "Name for network: $id",
+    originCountry = "aCountry",
+    logoPath = "aLogo"
+)
+
+private fun aProductionCompanyNetwork(id: Int = Random().nextInt()) = ProductionCompanyNetwork(
+    id = id,
+    logoPath = "LogoFor$id",
+    originCountry = "anOriginalCountry",
+    name = "Name for company $id"
+)
+
+private fun aSeasonNetwork(id: Int = Random().nextInt()) = SeasonNetwork(
+    id = id,
+    name = "Name of season $id",
+    posterPath = "aPosterForSeason$id",
+    description = "aDescription",
+    episodesCount = Random().nextInt(100),
+    seasonNumber = Random().nextInt(10),
+    airDate = "anAirDate"
+)

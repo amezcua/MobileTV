@@ -1,7 +1,5 @@
 package net.byteabyte.mobiletv.data.network.parsing
 
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import net.byteabyte.mobiletv.data.network.retrofit.configuration.JsonConfigurationResponse
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -9,17 +7,12 @@ import org.junit.jupiter.api.Test
 class ConfigurationParsingTest {
     @Test
     fun `Configuration responses can be parsed into configuration objects`() {
-        val adapter = buildMoshiAdapter()
+        val adapter = buildMoshiAdapter<JsonConfigurationResponse>()
         val json = adapter.fromJson(configurationResponse)!!
         val configuration = json.toConfigurationNetworkResponse()
 
         Assertions.assertEquals("https://image.tmdb.org/t/p/", configuration.baseUrl)
     }
-
-    private fun buildMoshiAdapter() = Moshi.Builder()
-        .add(KotlinJsonAdapterFactory())
-        .build()
-        .adapter(JsonConfigurationResponse::class.java)
 
     private val configurationResponse =
         """

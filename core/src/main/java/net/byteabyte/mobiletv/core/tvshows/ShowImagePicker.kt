@@ -1,12 +1,14 @@
 package net.byteabyte.mobiletv.core.tvshows
 
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
+
 interface ShowImagePicker {
 
     enum class Location {
         TOP_RATED_LIST_BG
     }
 
-    fun pickBestImage(show: Show, location: Location, imageWidth: Pixels): PickImageResult
+    fun pickBestImage(topRatedShow: TopRatedShow, location: Location, imageWidth: Pixels): PickImageResult
 
     sealed class PickImageResult {
         object Placeholder: PickImageResult()

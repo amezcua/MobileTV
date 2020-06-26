@@ -9,7 +9,7 @@ import androidx.core.view.doOnLayout
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
-import net.byteabyte.mobiletv.core.tvshows.Show
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.*
 import net.byteabyte.mobiletv.databinding.ShowBackdropBinding
@@ -23,15 +23,27 @@ class ShowBackdrop @JvmOverloads constructor(
     @Inject
     lateinit var showImagePicker: ShowImagePicker
 
+    var displayedImageUrl: ImageUrl? = null
+
     private val showBackdropBinding: ShowBackdropBinding =
         ShowBackdropBinding.inflate(LayoutInflater.from(context), this, true)
 
-    fun render(show: Show) {
+    fun render(topRatedShow: TopRatedShow) {
         if (viewIsMeasured(showBackdropBinding.backdropImageView)) {
-            loadImage(show)
+            loadImage(topRatedShow)
         } else {
             doOnLayout {
-                loadImage(show)
+                loadImage(topRatedShow)
+            }
+        }
+    }
+
+    fun render(imageUrl: ImageUrl) {
+        if (viewIsMeasured(showBackdropBinding.backdropImageView)) {
+            loadImage(imageUrl)
+        } else {
+            doOnLayout {
+                loadImage(imageUrl)
             }
         }
     }
@@ -40,9 +52,14 @@ class ShowBackdrop @JvmOverloads constructor(
         // TODO
     }
 
-    private fun loadImage(show: Show) {
+    private fun loadImage(topRatedShow: TopRatedShow) {
+        displayedImageUrl = pickBestBackdropImage(topRatedShow, showImagePicker)
+        loadImage(displayedImageUrl)
+    }
+
+    private fun loadImage(imageUrl: ImageUrl?) {
         Glide.with(this)
-            .load(pickBestBackdropImage(show, showImagePicker))
+            .load(imageUrl)
             .centerCrop()
             .into(showBackdropBinding.backdropImageView)
     }
@@ -50,11 +67,11 @@ class ShowBackdrop @JvmOverloads constructor(
     private fun viewIsMeasured(view: ImageView): Boolean =
         view.measuredWidth != 0 && view.measuredHeight != 0
 
-    private fun pickBestBackdropImage(show: Show, showImagePicker: ShowImagePicker): ImageUrl? {
+    private fun pickBestBackdropImage(topRatedShow: TopRatedShow, showImagePicker: ShowImagePicker): ImageUrl? {
         if (this.measuredHeight == 0 && this.measuredHeight == 0) this.invalidate()
 
         val bestImage = showImagePicker.pickBestImage(
-            show,
+            topRatedShow,
             Location.TOP_RATED_LIST_BG,
             this.measuredWidth
         )

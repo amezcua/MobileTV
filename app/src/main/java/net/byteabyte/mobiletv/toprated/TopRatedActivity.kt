@@ -7,7 +7,10 @@ import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_top_rated_shows.*
 import net.byteabyte.mobiletv.R
-import net.byteabyte.mobiletv.core.tvshows.Show
+import net.byteabyte.mobiletv.SharedTransitions
+import net.byteabyte.mobiletv.core.tvshows.ImageUrl
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
+import net.byteabyte.mobiletv.showdetails.ShowDetailsActivity
 
 @AndroidEntryPoint
 class TopRatedActivity : AppCompatActivity() {
@@ -33,7 +36,12 @@ class TopRatedActivity : AppCompatActivity() {
         })
     }
 
-    private fun onShowClick(show: Show) {
-        // TODO
+    private fun onShowClick(topRatedClickData: TopRatedClickData) {
+        ShowDetailsActivity.start(
+            context = this,
+            showId = topRatedClickData.topRatedShow.id,
+            backdropUrl = topRatedClickData.topRatedDisplayedImage.orEmpty(),
+            sharedTransitions = topRatedClickData.sharedTransitions
+        )
     }
 }

@@ -78,7 +78,7 @@ class TMDBNetworkImagesConfigurationTest {
         val validResponse = aValidJsonConfigurationResult()
         whenever(tmdbApi.configuration(any())).thenReturn(validResponse)
 
-        val result = (buildTmdbNetwork(tmdbApi).requestImagesConfiguration() as TMDBNetworkResponse.Success).response
+        val result = (buildTmdbNetwork(tmdbApi).requestImagesConfiguration() as TMDBNetworkResponse.Success).data
 
         assertEquals(result.baseUrl, "aSecureBaseUrl")
         assertTrue(result.backDropSizes.isNotEmpty())

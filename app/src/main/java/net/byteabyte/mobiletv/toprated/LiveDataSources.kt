@@ -6,8 +6,8 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PageKeyedDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import net.byteabyte.mobiletv.core.tvshows.GetTopRated
-import net.byteabyte.mobiletv.core.tvshows.Show
+import net.byteabyte.mobiletv.core.tvshows.top_rated.GetTopRated
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 
 internal inline fun <reified K, V> dataSourceFactory(
     crossinline factory: () -> DataSource.Factory<K, V>
@@ -19,21 +19,21 @@ internal inline fun <reified K, V> dataSourceFactory(
 internal class ShowsDataSourceFactory(
     private val scope: CoroutineScope,
     private val getTopRated: GetTopRated
-) : DataSource.Factory<Int, Show>() {
-    override fun create(): DataSource<Int, Show> = ShowsDataSource(scope, getTopRated)
+) : DataSource.Factory<Int, TopRatedShow>() {
+    override fun create(): DataSource<Int, TopRatedShow> = ShowsDataSource(scope, getTopRated)
 }
 
 private class ShowsDataSource(val scope: CoroutineScope, val getTopRated: GetTopRated) :
-    PageKeyedDataSource<Int, Show>() {
+    PageKeyedDataSource<Int, TopRatedShow>() {
     override fun loadInitial(
         params: LoadInitialParams<Int>,
-        callback: LoadInitialCallback<Int, Show>
+        callback: LoadInitialCallback<Int, TopRatedShow>
     ) {
         scope.launch {
             val initialPage = 1
             when (val topRated = getTopRated(initialPage)) {
                 is GetTopRated.GetTopRatedResult.Success -> callback.onResult(
-                    topRated.page.shows,
+                    topRated.page.topRatedShows,
                     null,
                     topRated.page.nextPage
                 )
@@ -42,7 +42,7 @@ private class ShowsDataSource(val scope: CoroutineScope, val getTopRated: GetTop
         }
     }
 
-    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, Show>) {
+    override fun loadAfter(params: LoadParams<Int>, callback: LoadCallback<Int, TopRatedShow>) {
         Log.d(
             TAG,
             "loadAfter. Got: RequestedLoadSize: ${params.requestedLoadSize}, Key: ${params.key}"
@@ -50,7 +50,7 @@ private class ShowsDataSource(val scope: CoroutineScope, val getTopRated: GetTop
         scope.launch {
             when (val topRated = getTopRated(params.key)) {
                 is GetTopRated.GetTopRatedResult.Success -> callback.onResult(
-                    topRated.page.shows,
+                    topRated.page.topRatedShows,
                     topRated.page.nextPage
                 )
                 else -> Log.d(TAG, "loadInitial. Got: $topRated")
@@ -58,7 +58,7 @@ private class ShowsDataSource(val scope: CoroutineScope, val getTopRated: GetTop
         }
     }
 
-    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, Show>) {
+    override fun loadBefore(params: LoadParams<Int>, callback: LoadCallback<Int, TopRatedShow>) {
         Log.d(
             TAG,
             "loadBefore. Got: RequestedLoadSize: ${params.requestedLoadSize}, Key: ${params.key}"
@@ -66,7 +66,7 @@ private class ShowsDataSource(val scope: CoroutineScope, val getTopRated: GetTop
         scope.launch {
             when (val topRated = getTopRated(params.key)) {
                 is GetTopRated.GetTopRatedResult.Success -> callback.onResult(
-                    topRated.page.shows,
+                    topRated.page.topRatedShows,
                     topRated.page.previousPage
                 )
                 else -> Log.d(TAG, "loadInitial. Got: $topRated")

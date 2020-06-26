@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import net.byteabyte.mobiletv.core.tvshows.GetTopRated
-import net.byteabyte.mobiletv.core.tvshows.Show
+import net.byteabyte.mobiletv.core.tvshows.top_rated.GetTopRated
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 
 class TopRatedViewModel @ViewModelInject constructor(getTopRated: GetTopRated) : ViewModel() {
-    private val _topRatedShows: LivePagedListBuilder<Int, Show> by dataSourceFactory {
+    private val _topRatedShows: LivePagedListBuilder<Int, TopRatedShow> by dataSourceFactory {
         ShowsDataSourceFactory(viewModelScope, getTopRated)
     }
-    val topRatedShows: LiveData<PagedList<Show>> by lazy { _topRatedShows.build() }
+    val topRatedShows: LiveData<PagedList<TopRatedShow>> by lazy { _topRatedShows.build() }
 }

@@ -4,5 +4,5 @@ internal data class TopRatedResponsePage(
     val totalPages: Int,
     val totalResults: Int,
     val page: Int,
-    val shows: List<TopRatedTvShow>
+    val shows: List<TopRatedNetworkShow>
 )
