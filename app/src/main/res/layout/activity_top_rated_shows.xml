@@ -10,10 +10,25 @@
         android:id="@+id/topRatedShowsRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/top_rated_show_item"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        tools:listitem="@layout/top_rated_show_item" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/gotToTopButton"
+        style="@style/CircularButton"
+        android:layout_width="@dimen/grid_6"
+        android:layout_height="@dimen/grid_6"
+        android:layout_marginEnd="@dimen/grid_2"
+        android:layout_marginBottom="@dimen/grid_2"
+        app:cornerRadius="@dimen/grid_8"
+        app:icon="@drawable/ic_up_arrow"
+        app:iconTint="@color/colorAccent"
+        app:iconGravity="textStart"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:shapeAppearanceOverlay="@style/CircularButtonOverlay" />
 </androidx.constraintlayout.widget.ConstraintLayout>

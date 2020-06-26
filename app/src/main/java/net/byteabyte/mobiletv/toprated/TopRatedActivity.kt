@@ -5,29 +5,30 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_top_rated_shows.*
-import net.byteabyte.mobiletv.R
-import net.byteabyte.mobiletv.SharedTransitions
-import net.byteabyte.mobiletv.core.tvshows.ImageUrl
-import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
+import net.byteabyte.mobiletv.databinding.ActivityTopRatedShowsBinding
 import net.byteabyte.mobiletv.showdetails.ShowDetailsActivity
 
 @AndroidEntryPoint
 class TopRatedActivity : AppCompatActivity() {
 
+    private lateinit var topRatedBinding: ActivityTopRatedShowsBinding
     private val viewModel by viewModels<TopRatedViewModel>()
     private val showsAdapter = TopRatedAdapter(::onShowClick)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_top_rated_shows)
+        topRatedBinding = ActivityTopRatedShowsBinding.inflate(layoutInflater)
+        setContentView(topRatedBinding.root)
 
         configureRecyclerView()
         observeViewModel()
     }
 
     private fun configureRecyclerView() {
-        topRatedShowsRecyclerView.adapter = showsAdapter
+        topRatedBinding.topRatedShowsRecyclerView.adapter = showsAdapter
+        topRatedBinding.gotToTopButton.setOnClickListener {
+            topRatedBinding.topRatedShowsRecyclerView.scrollToPosition(0)
+        }
     }
 
     private fun observeViewModel() {

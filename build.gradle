@@ -10,6 +10,7 @@ ext {
     fragmentKtxVersion = '1.2.5'
     glideVersion = '4.11.0'
     hiltAndroidXVersion = '1.0.0-alpha01'
+    materialComponentsVersion = '1.1.0'
     moshiVersion = "1.9.3"
     pagingVersion = "2.1.2"
     retrofitVersion = "2.9.0"

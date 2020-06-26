@@ -1,10 +1,41 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CircularButtonOverlay" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CircularButton" parent="Widget.MaterialComponents.Button.Icon">
+        <item name="android:alpha">0.8</item>
+        <item name="android:padding">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="TopRatedShowTitle" parent="TextAppearance.MdcTypographyStyles.Caption">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Rating" parent="TextAppearance.MdcTypographyStyles.Headline5">
+
+    </style>
+
+    <style name="RatingAverage" parent="Rating">
+    </style>
+
+    <style name="RatingMax" parent="Rating">
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

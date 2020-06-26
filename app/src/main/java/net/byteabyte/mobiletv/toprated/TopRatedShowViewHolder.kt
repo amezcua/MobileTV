@@ -9,6 +9,7 @@ import net.byteabyte.mobiletv.SharedTransitions
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
 import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import net.byteabyte.mobiletv.databinding.TopRatedShowItemBinding
+import net.byteabyte.mobiletv.uicomponents.ShowRating
 
 class TopRatedShowViewHolder(itemView: TopRatedShowItemBinding) :
     RecyclerView.ViewHolder(itemView.root) {
@@ -17,6 +18,13 @@ class TopRatedShowViewHolder(itemView: TopRatedShowItemBinding) :
     fun bind(topRatedShow: TopRatedShow, onShowClick: (TopRatedClickData) -> Unit) {
         itemView.showNameTextView.text = topRatedShow.name
         itemView.showBackdropView.render(topRatedShow)
+        itemView.showRatingView.render(
+            ShowRating.State(
+                topRatedShow.rating,
+                topRatedShow.maxRating,
+                topRatedShow.totalVotes
+            )
+        )
         itemView.setOnClickListener {
             onShowClick(
                 TopRatedClickData(

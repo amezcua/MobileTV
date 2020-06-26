@@ -62,6 +62,7 @@ dependencies {
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
     implementation "androidx.paging:paging-runtime:$pagingVersion"
     implementation "com.github.bumptech.glide:glide:$glideVersion"
+    implementation "com.google.android.material:material:$materialComponentsVersion"
     implementation "com.squareup.moshi:moshi:$moshiVersion"
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'

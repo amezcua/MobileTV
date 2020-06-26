@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:background="@color/colorSecondary">
+
+    <ImageView
+        android:id="@+id/starIcon"
+        android:layout_width="@dimen/grid_3"
+        android:layout_height="@dimen/grid_3"
+        android:src="@drawable/ic_star"
+        android:tint="@color/secondaryTextColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/starIcon"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/ratingAverage"
+            style="@style/RatingAverage"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginStart="@dimen/grid_1"
+            android:layout_marginBottom="@dimen/grid_2"
+            app:layout_constraintBottom_toTopOf="@id/ratingTotalVotes"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread"
+            tools:text="8.8" />
+
+        <TextView
+            android:id="@+id/ratingMax"
+            style="@style/RatingMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_half"
+            android:layout_marginBottom="@dimen/grid_half"
+            app:layout_constraintBottom_toBottomOf="@id/ratingAverage"
+            app:layout_constraintStart_toEndOf="@id/ratingAverage"
+            tools:text="/10" />
+
+        <TextView
+            android:id="@+id/ratingTotalVotes"
+            style="@style/RatingMax"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ratingAverage"
+            tools:text="1000" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

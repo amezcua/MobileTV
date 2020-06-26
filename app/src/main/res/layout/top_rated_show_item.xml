@@ -29,16 +29,25 @@
 
     <TextView
         android:id="@+id/showNameTextView"
-        android:layout_width="match_parent"
+        style="@style/TopRatedShowTitle"
+        android:layout_width="0dp"
         android:layout_height="@dimen/grid_8"
         android:gravity="center_vertical"
         android:paddingStart="@dimen/grid_2"
         android:paddingEnd="@dimen/grid_2"
-        android:textColor="@color/secondaryTextColor"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/showRatingView"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="A show title" />
+
+    <net.byteabyte.mobiletv.uicomponents.ShowRating
+        android:id="@+id/showRatingView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/grid_2"
+        app:layout_constraintBottom_toBottomOf="@id/showNameWrapper"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/showNameTextView"
+        app:layout_constraintTop_toTopOf="@id/showNameWrapper" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
