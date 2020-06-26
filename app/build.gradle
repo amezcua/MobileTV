@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "net.byteabyte.mobiletv"
-        minSdkVersion 22
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -26,6 +26,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     productFlavors {
@@ -57,6 +61,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:$fragmentKtxVersion"
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hiltAndroidXVersion"
     implementation "androidx.paging:paging-runtime:$pagingVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
     implementation "com.squareup.moshi:moshi:$moshiVersion"
     implementation "com.squareup.moshi:moshi-kotlin:$moshiVersion"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
@@ -69,7 +74,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 
-    implementation "androidx.appcompat:appcompat:$appCompatVersion"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
 
     // Hilt
     implementation "com.google.dagger:hilt-android:$hiltVersion"

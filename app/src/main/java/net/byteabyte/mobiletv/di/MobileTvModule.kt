@@ -9,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import net.byteabyte.mobiletv.BuildConfig
 import net.byteabyte.mobiletv.core.Repository
+import net.byteabyte.mobiletv.core.di.CoreModule
 import net.byteabyte.mobiletv.data.MobileTVRepository
 import net.byteabyte.mobiletv.data.network.TMDBNetwork
 import net.byteabyte.mobiletv.data.network.retrofit.TMDBApi
@@ -16,8 +17,8 @@ import net.byteabyte.mobiletv.utils.NetworkUtils
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-@Module
 @InstallIn(ActivityComponent::class)
+@Module(includes = [CoreModule::class])
 object MobileTvModule {
 
     @Provides

@@ -4,21 +4,22 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import net.byteabyte.mobiletv.R
 import net.byteabyte.mobiletv.core.tvshows.Show
+import net.byteabyte.mobiletv.databinding.TopRatedShowItemBinding
 
-class TopRatedAdapter : PagedListAdapter<Show, TopRatedShowViewHolder>(DIFF_CALLBACK) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopRatedShowViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.top_rated_show_item, parent, false)
-        return TopRatedShowViewHolder(view)
-    }
+class TopRatedAdapter(private val onShowClick: (Show) -> Unit) : PagedListAdapter<Show, TopRatedShowViewHolder>(DIFF_CALLBACK) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopRatedShowViewHolder =
+        TopRatedShowViewHolder(
+            TopRatedShowItemBinding.inflate(LayoutInflater.from(parent.context),
+                parent,
+                false))
 
     override fun onBindViewHolder(holder: TopRatedShowViewHolder, position: Int) {
         val show = getItem(position)
         if (show != null) {
-            holder.bind(show)
+            holder.bind(show, onShowClick)
         } else {
-            holder.renderPlaceholder()
+            holder.renderPlaceHolder()
         }
     }
 

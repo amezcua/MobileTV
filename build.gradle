@@ -8,6 +8,7 @@ ext {
     // App dependencies
     appCompatVersion = '1.1.0'
     fragmentKtxVersion = '1.2.5'
+    glideVersion = '4.11.0'
     hiltAndroidXVersion = '1.0.0-alpha01'
     moshiVersion = "1.9.3"
     pagingVersion = "2.1.2"
