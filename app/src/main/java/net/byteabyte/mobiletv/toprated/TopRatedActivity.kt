@@ -1,8 +1,10 @@
 package net.byteabyte.mobiletv.toprated
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import net.byteabyte.mobiletv.databinding.ActivityTopRatedShowsBinding
@@ -34,7 +36,14 @@ class TopRatedActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.topRatedShows.observe(this, Observer { shows ->
             showsAdapter.submitList(shows)
-            hideLoading()
+        })
+
+        viewModel.showLoading.observe(this, Observer { showLoading ->
+            if (showLoading) {
+                topRatedBinding.loadingOverlay.isVisible = true
+            } else {
+                hideLoading()
+            }
         })
     }
 
