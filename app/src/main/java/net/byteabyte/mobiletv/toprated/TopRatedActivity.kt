@@ -34,7 +34,12 @@ class TopRatedActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.topRatedShows.observe(this, Observer { shows ->
             showsAdapter.submitList(shows)
+            hideLoading()
         })
+    }
+
+    private fun hideLoading() {
+        topRatedBinding.loadingOverlay.hide()
     }
 
     private fun onShowClick(topRatedClickData: TopRatedClickData) {

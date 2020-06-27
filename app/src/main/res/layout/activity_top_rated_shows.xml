@@ -26,9 +26,15 @@
         android:layout_marginBottom="@dimen/grid_2"
         app:cornerRadius="@dimen/grid_8"
         app:icon="@drawable/ic_up_arrow"
-        app:iconTint="@color/colorAccent"
         app:iconGravity="textStart"
+        app:iconTint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/CircularButtonOverlay" />
+
+    <net.byteabyte.mobiletv.uicomponents.LoadingOverlay
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:elevation="@dimen/grid_1"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
