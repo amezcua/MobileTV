@@ -1,19 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".showdetails.ShowDetailsActivity"
-    android:id="@+id/showDetailsActivity"
-    app:layoutDescription="@xml/activity_show_details_scene">
+    android:layout_height="match_parent">
 
-    <net.byteabyte.mobiletv.uicomponents.ShowBackdrop
-        android:id="@+id/showBackDropView"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/grid_30"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/showDetailsActivity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".showdetails.ShowDetailsActivity">
 
-</androidx.constraintlayout.motion.widget.MotionLayout>
+        <net.byteabyte.mobiletv.uicomponents.ShowBackdrop
+            android:id="@+id/showBackDropView"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/grid_30"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <net.byteabyte.mobiletv.uicomponents.ShowPoster
+            android:id="@+id/showPosterView"
+            android:layout_width="@dimen/grid_20"
+            android:layout_height="@dimen/grid_30"
+            android:layout_marginStart="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/showBackDropView" />
+
+        <net.byteabyte.mobiletv.uicomponents.ShowRating
+            android:id="@+id/showRatingView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/grid_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/showPosterView"
+            android:visibility="invisible"
+            tools:visibility="visible"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/gotBackButton"
+            style="@style/CircularButton"
+            android:layout_width="@dimen/grid_4"
+            android:layout_height="@dimen/grid_4"
+            android:layout_marginTop="@dimen/grid_2"
+            android:elevation="@dimen/grid_1"
+            android:rotation="-90"
+            android:visibility="invisible"
+            app:cornerRadius="@dimen/grid_8"
+            app:icon="@drawable/ic_up_arrow"
+            app:layout_constraintStart_toStartOf="@id/showPosterView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircularButtonOverlay"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/showDetailsTitleTextView"
+            style="@style/TextAppearance.MdcTypographyStyles.Headline4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginEnd="@dimen/grid_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/showPosterView"
+            tools:text="A show title" />
+
+        <TextView
+            android:id="@+id/showDetailsDescriptionTextView"
+            style="@style/ShowDetailsDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginEnd="@dimen/grid_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/showDetailsTitleTextView"
+            tools:text="A show description" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

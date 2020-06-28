@@ -1,19 +1,34 @@
 package net.byteabyte.mobiletv.uicomponents
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnLayout
+import com.bumptech.glide.GenericTransitionOptions.withNoTransition
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.NoTransition
 import dagger.hilt.android.AndroidEntryPoint
+import jp.wasabeef.glide.transformations.BlurTransformation
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
-import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
-import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.*
+import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
+import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import net.byteabyte.mobiletv.databinding.ShowBackdropBinding
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ShowBackdrop @JvmOverloads constructor(
@@ -52,12 +67,50 @@ class ShowBackdrop @JvmOverloads constructor(
         // TODO
     }
 
+    fun blur(onBlurred: () -> Unit) {
+        val transformations =
+            MultiTransformation(CenterCrop(), BlurTransformation(50, 3))
+        Glide.with(this)
+            .asBitmap()
+            .load(displayedImageUrl)
+            .placeholder(showBackdropBinding.backdropImageView.drawable)
+            .transition(withCrossFade())
+            .apply(RequestOptions.bitmapTransform(transformations))
+            .addListener(object :RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onBlurred()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    onBlurred()
+                    return false
+                }
+
+            })
+            .into(showBackdropBinding.backdropImageView)
+            .waitForLayout()
+
+    }
+
     private fun loadImage(topRatedShow: TopRatedShow) {
         displayedImageUrl = pickBestBackdropImage(topRatedShow, showImagePicker)
         loadImage(displayedImageUrl)
     }
 
     private fun loadImage(imageUrl: ImageUrl?) {
+        displayedImageUrl = imageUrl
         Glide.with(this)
             .load(imageUrl)
             .centerCrop()

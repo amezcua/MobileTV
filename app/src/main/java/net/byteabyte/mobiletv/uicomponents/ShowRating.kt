@@ -15,7 +15,7 @@ class ShowRating @JvmOverloads constructor(
         ShowRatingBinding.inflate(LayoutInflater.from(context), this, true)
 
     @SuppressLint("SetTextI18n")
-    fun render(state: State) {
+    fun render(state: State): ShowRating = apply {
         showRatingBinding.ratingAverage.text = state.averageRating.toString()
         showRatingBinding.ratingMax.text = "/${state.maxRating}"
         showRatingBinding.ratingTotalVotes.text = state.totalVotes.toString()

@@ -9,7 +9,6 @@ import javax.inject.Singleton
 class GetShowDetails @Inject constructor(private val repository: Repository) {
 
     suspend operator fun invoke(showId: ShowId): GetShowDetailsResult {
-        println("Invoked: GetShowDetails $showId")
         return when (val result = repository.getShowDetails(showId)) {
             is Repository.RepositoryResult.Success -> GetShowDetailsResult.Success(result.data)
             is Repository.RepositoryResult.Error -> GetShowDetailsResult.Error
