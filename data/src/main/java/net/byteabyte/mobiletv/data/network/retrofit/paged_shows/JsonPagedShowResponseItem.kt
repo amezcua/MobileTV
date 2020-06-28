@@ -1,11 +1,11 @@
-package net.byteabyte.mobiletv.data.network.retrofit.top_rated
+package net.byteabyte.mobiletv.data.network.retrofit.paged_shows
 
 import com.squareup.moshi.Json
 import net.byteabyte.mobiletv.data.network.retrofit.InvalidApiResponseException
-import net.byteabyte.mobiletv.data.network.top_rated.TopRatedNetworkShow
+import net.byteabyte.mobiletv.data.network.paged_shows.PagedNetworkShow
 import java.lang.Exception
 
-data class JsonTopRatedResponse(
+data class JsonPagedShowResponseItem(
     @Json(name = "id") val id: Int?,
     @Json(name = "name") val name: String?,
     @Json(name = "overview") val overview: String?,
@@ -18,9 +18,9 @@ data class JsonTopRatedResponse(
 ) {
     // Only null checks are done here (captured in a layer above when parsing it instead of
     // letting the json serializer fail)
-    internal fun toTopRatedShow(): TopRatedNetworkShow =
+    internal fun toTopRatedShow(): PagedNetworkShow =
         try {
-            TopRatedNetworkShow(
+            PagedNetworkShow(
                 id = this.id!!,
                 name = this.name!!,
                 description = this.overview ?: "",

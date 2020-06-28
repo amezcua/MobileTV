@@ -1,9 +1,9 @@
-package net.byteabyte.mobiletv.core.tvshows.top_rated
+package net.byteabyte.mobiletv.core.tvshows.paged
 
 import net.byteabyte.mobiletv.core.tvshows.ImagesMap
 import net.byteabyte.mobiletv.core.tvshows.ShowId
 
-data class TopRatedShow(
+data class ShowSummary(
     val id: ShowId,
     val name: String,
     val backdropImages: ImagesMap,

@@ -7,8 +7,10 @@ import net.byteabyte.mobiletv.data.network.retrofit.TMDBApi
 import net.byteabyte.mobiletv.data.network.retrofit.configuration.JsonConfigurationResponse
 import net.byteabyte.mobiletv.data.network.retrofit.configuration.JsonImagesConfiguration
 import net.byteabyte.mobiletv.data.network.show_details.*
-import net.byteabyte.mobiletv.data.network.top_rated.TopRatedResponsePage
-import net.byteabyte.mobiletv.data.network.top_rated.TopRatedNetworkShow
+import net.byteabyte.mobiletv.data.network.paged_shows.NetworkShowsPage
+import net.byteabyte.mobiletv.data.network.paged_shows.PagedNetworkShow
+import net.byteabyte.mobiletv.data.network.retrofit.paged_shows.JsonPagedShowResponseItem
+import net.byteabyte.mobiletv.data.network.retrofit.paged_shows.JsonPagedShowsResponse
 import retrofit2.HttpException
 import java.util.*
 
@@ -21,16 +23,16 @@ internal fun a500Error(): HttpException = anHttpError(500)
 private fun anHttpError(code: Int): HttpException =
     mock<HttpException>().apply { whenever(this.code()).thenReturn(code) }
 
-internal fun aTopRatedResponsePage() = TopRatedResponsePage(
+internal fun aNetworkResponseShowsPage() = NetworkShowsPage(
     page = 1,
     totalPages = 10,
     totalResults = 100,
     shows = (0 until 10).map {
-        aTopRatedShow(it)
+        aPagedNetworkShow(it)
     }
 )
 
-private fun aTopRatedShow(id: Int) = TopRatedNetworkShow(
+private fun aPagedNetworkShow(id: Int) = PagedNetworkShow(
     id = id,
     totalVotes = Random().nextInt(),
     rating = Random().nextDouble(),
@@ -118,3 +120,29 @@ private fun aSeasonNetwork(id: Int = Random().nextInt()) = SeasonNetwork(
     seasonNumber = Random().nextInt(10),
     airDate = "anAirDate"
 )
+
+fun anInvalidJsonPagedShowsResult() =
+    JsonPagedShowsResponse(null, null, null, null)
+
+fun aValidJsonPagedShowsResult() =
+    JsonPagedShowsResponse(
+        totalPages = Random().nextInt(10),
+        totalResults = Random().nextInt(100),
+        page = Random().nextInt(10),
+        responses = aListOfJsonPagedResults()
+    )
+
+private fun aListOfJsonPagedResults(maxResults: Int = 10) =
+    (0 until maxResults).mapIndexed { index, _ ->
+        JsonPagedShowResponseItem(
+            id = index,
+            name = "aResultName",
+            overview = "The description",
+            popularity = 0.0,
+            voteAverage = 0.0,
+            voteCount = 0,
+            posterPath = "aPath",
+            backdropPath = "backdropPath",
+            originalLanguage = "en"
+        )
+    }

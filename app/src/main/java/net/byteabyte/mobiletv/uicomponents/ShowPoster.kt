@@ -10,9 +10,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import dagger.hilt.android.AndroidEntryPoint
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
+import net.byteabyte.mobiletv.core.tvshows.ImagesMap
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
 import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
+import net.byteabyte.mobiletv.core.tvshows.paged.ShowSummary
 import net.byteabyte.mobiletv.databinding.ShowPosterBinding
 import javax.inject.Inject
 
@@ -23,6 +25,8 @@ class ShowPoster @JvmOverloads constructor(
 
     @Inject
     lateinit var showImagePicker: ShowImagePicker
+
+    var displayedImageUrl: ImageUrl? = null
 
     private val showPosterBinding: ShowPosterBinding =
         ShowPosterBinding.inflate(LayoutInflater.from(context), this, true)
@@ -37,11 +41,26 @@ class ShowPoster @JvmOverloads constructor(
         }
     }
 
+    fun render(showSummary: ShowSummary) {
+        if (viewIsMeasured(showPosterBinding.posterImageView)) {
+            loadImage(showSummary)
+        } else {
+            doOnLayout {
+                loadImage(showSummary)
+            }
+        }
+    }
+
     private fun loadImage(showDetails: ShowDetails) {
         loadImage(pickBestPosterImage(showDetails, showImagePicker))
     }
 
+    private fun loadImage(showSummary: ShowSummary) {
+        loadImage(pickBestPosterImage(showSummary, showImagePicker))
+    }
+
     private fun loadImage(imageUrl: ImageUrl?) {
+        displayedImageUrl = imageUrl
         Glide.with(this)
             .asBitmap()
             .load(imageUrl)
@@ -53,14 +72,31 @@ class ShowPoster @JvmOverloads constructor(
     private fun viewIsMeasured(view: ImageView): Boolean =
         view.measuredWidth != 0 && view.measuredHeight != 0
 
-    private fun pickBestPosterImage(showDetails: ShowDetails, showImagePicker: ShowImagePicker): ImageUrl? {
+    private fun pickBestPosterImage(
+        showDetails: ShowDetails,
+        showImagePicker: ShowImagePicker
+    ): ImageUrl? =
+        pickBestPosterImage(
+            listOf(showDetails.posterImages, showDetails.backdropImages),
+            showImagePicker
+        )
+
+    private fun pickBestPosterImage(
+        showSummary: ShowSummary,
+        showImagePicker: ShowImagePicker
+    ): ImageUrl? =
+        pickBestPosterImage(
+            listOf(showSummary.posterImages, showSummary.backdropImages),
+            showImagePicker
+        )
+
+    private fun pickBestPosterImage(
+        imageMaps: List<ImagesMap>,
+        showImagePicker: ShowImagePicker
+    ): ImageUrl? {
         if (this.measuredHeight == 0 && this.measuredHeight == 0) this.invalidate()
 
-        val bestImage = showImagePicker.pickBestImage(
-            listOf(showDetails.posterImages, showDetails.backdropImages),
-            this.measuredWidth
-        )
-        return when (bestImage) {
+        return when (val bestImage = showImagePicker.pickBestImage(imageMaps, this.measuredWidth)) {
             is PickImageResult.Placeholder -> null
             is PickImageResult.Image -> bestImage.url
         }

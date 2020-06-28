@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/grid_2">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/showDetailsActivity"
@@ -33,10 +34,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/grid_2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/showPosterView"
             android:visibility="invisible"
-            tools:visibility="visible"/>
+            app:layout_constraintBottom_toBottomOf="@id/showPosterView"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/gotBackButton"
@@ -77,6 +78,61 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/showDetailsTitleTextView"
             tools:text="A show description" />
+
+        <TextView
+            android:id="@+id/similarShowsTitle"
+            style="@style/TextAppearance.MdcTypographyStyles.Headline6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginEnd="@dimen/grid_2"
+            android:text="@string/similar_shows"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/showDetailsDescriptionTextView"
+            tools:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/similarShowsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/grid_30"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/similarShowsTitle"
+            tools:listitem="@layout/similar_show_item" />
+
+        <TextView
+            android:id="@+id/moreInformationTitle"
+            style="@style/TextAppearance.MdcTypographyStyles.Headline6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginEnd="@dimen/grid_2"
+            android:text="@string/more_information"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/similarShowsRecyclerView"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/moreInformationUrl"
+            style="@style/TextAppearance.MdcTypographyStyles.Body2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_3"
+            android:layout_marginTop="@dimen/grid_2"
+            android:layout_marginEnd="@dimen/grid_2"
+            android:background="?attr/selectableItemBackground"
+            android:text="@string/more_information"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/moreInformationTitle"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

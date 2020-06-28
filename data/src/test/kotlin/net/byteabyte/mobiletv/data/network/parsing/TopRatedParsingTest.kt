@@ -1,6 +1,6 @@
 package net.byteabyte.mobiletv.data.network.parsing
 
-import net.byteabyte.mobiletv.data.network.retrofit.top_rated.JsonTopRatedShowsResponse
+import net.byteabyte.mobiletv.data.network.retrofit.paged_shows.JsonPagedShowsResponse
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -8,7 +8,7 @@ class TopRatedParsingTest {
 
     @Test
     fun `Top rated responses can be parsed into paged objects`() {
-        val adapter = buildMoshiAdapter<JsonTopRatedShowsResponse>()
+        val adapter = buildMoshiAdapter<JsonPagedShowsResponse>()
         val json1 = adapter.fromJson(sample1)!!
         val page1 = json1.toNetworkResponsePage()
 

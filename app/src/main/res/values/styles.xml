@@ -44,4 +44,8 @@
     <style name="ShowDetailsDescription" parent="TextAppearance.MdcTypographyStyles.Body2">
         <item name="android:lineSpacingMultiplier">1.5</item>
     </style>
+
+    <style name="SimilarShowName" parent="TextAppearance.MdcTypographyStyles.Body1">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+    </style>
 </resources>

@@ -3,31 +3,41 @@ package net.byteabyte.mobiletv.showdetails
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.transition.doOnEnd
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_show_details.*
 import net.byteabyte.mobiletv.R
 import net.byteabyte.mobiletv.SharedTransitions
+import net.byteabyte.mobiletv.ShowClickData
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
 import net.byteabyte.mobiletv.core.tvshows.ShowId
+import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
 import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
 import net.byteabyte.mobiletv.databinding.ActivityShowDetailsBinding
 import net.byteabyte.mobiletv.extra
 import net.byteabyte.mobiletv.uicomponents.ShowRating
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShowDetailsActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var showImagePicker: ShowImagePicker
+
     private val showId: ShowId by extra(EXTRA_SHOW_ID)
     private val backdropUrl: ImageUrl by extra(EXTRA_BACKDROP_IMAGE_URL)
+    private val similarShowsAdapter = SimilarShowsAdapter(::onSimilarShowClick)
     private lateinit var showDetailsBinding: ActivityShowDetailsBinding
     private val viewModel by viewModels<ShowDetailsViewModel>()
 
@@ -36,14 +46,15 @@ class ShowDetailsActivity : AppCompatActivity() {
         showDetailsBinding = ActivityShowDetailsBinding.inflate(layoutInflater)
         setContentView(showDetailsBinding.root)
 
+        configureSimilarShowsRecyclerView()
         setupEnterTransition()
         setupBackButton()
         observeViewModel()
     }
 
     private fun setupEnterTransition() {
-        ViewCompat.setTransitionName(findViewById(R.id.showBackDropView), showId.toString())
-        showDetailsBinding.showBackDropView.render(backdropUrl)
+        ViewCompat.setTransitionName(showBackDropView, showId.toString())
+        showBackDropView.render(backdropUrl)
     }
 
     private fun setupBackButton() {
@@ -53,20 +64,29 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+        window.sharedElementEnterTransition.doOnEnd {
+            observeShowDetails()
+            viewModel.loadShow(showId)
+            observeSimilarShows()
+        }
+    }
+
+    private fun observeShowDetails() {
         viewModel.showDetails.observe(this, Observer { showDetailsState ->
             when (showDetailsState) {
                 is ShowDetailsViewModel.ShowDetailsState.ShowReady -> renderShow(showDetailsState.showDetails)
                 is ShowDetailsViewModel.ShowDetailsState.ShowDetailsLoadError -> {
-                    Toast.makeText(this, R.string.error_loading_show_details, Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this, R.string.error_loading_show_details, LENGTH_SHORT).show()
                     supportFinishAfterTransition()
                 }
             }
         })
+    }
 
-        window.sharedElementEnterTransition.doOnEnd {
-            viewModel.loadShow(showId)
-        }
+    private fun observeSimilarShows() {
+        viewModel.similarShows.observe(this, Observer { similarShows ->
+            similarShowsAdapter.submitList(similarShows)
+        })
     }
 
     private fun renderShow(showDetails: ShowDetails) {
@@ -76,6 +96,8 @@ class ShowDetailsActivity : AppCompatActivity() {
             showDetailsTitleTextView.text = showDetails.name
             showDetailsDescriptionTextView.text = showDetails.description
             renderRating(showDetails)
+            similarShowsTitle.isVisible = true
+            renderMoreInformation(showDetails)
         }
     }
 
@@ -87,6 +109,31 @@ class ShowDetailsActivity : AppCompatActivity() {
                 showDetails.totalVotes
             )
         ).apply { isVisible = true }
+    }
+
+    private fun renderMoreInformation(showDetails: ShowDetails) {
+        moreInformationTitle.isVisible = showDetails.homePageUrl.isNotBlank()
+        moreInformationUrl.isVisible = showDetails.homePageUrl.isNotBlank()
+        moreInformationUrl.text = showDetails.homePageUrl
+        moreInformationUrl.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(showDetails.homePageUrl)))
+        }
+    }
+
+    private fun configureSimilarShowsRecyclerView() {
+        similarShowsRecyclerView.apply {
+            LinearSnapHelper().attachToRecyclerView(this)
+            adapter = similarShowsAdapter
+        }
+    }
+
+    private fun onSimilarShowClick(show: ShowClickData) {
+        start(
+            this,
+            show.showSummary.id,
+            show.displayedImage.orEmpty(),
+            show.sharedTransitions
+        )
     }
 
     companion object {

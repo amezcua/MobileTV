@@ -1,9 +1,9 @@
-package net.byteabyte.mobiletv.data.network.top_rated
+package net.byteabyte.mobiletv.data.network.paged_shows
 
-import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
+import net.byteabyte.mobiletv.core.tvshows.paged.ShowSummary
 import net.byteabyte.mobiletv.data.network.imagesconfiguration.ImagesConfigurationNetwork
 
-internal data class TopRatedNetworkShow(
+internal data class PagedNetworkShow(
     val id: Int,
     val name: String,
     val backdropImage: String,
@@ -12,8 +12,8 @@ internal data class TopRatedNetworkShow(
     val rating: Double,
     val totalVotes: Int
 ) {
-    fun toShow(imagesConfiguration: ImagesConfigurationNetwork): TopRatedShow {
-        return TopRatedShow(
+    fun toShow(imagesConfiguration: ImagesConfigurationNetwork): ShowSummary {
+        return ShowSummary(
             id = id,
             name = name,
             backdropImages = imagesConfiguration.buildBackdropImages(backdropImage),

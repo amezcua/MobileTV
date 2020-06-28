@@ -4,7 +4,7 @@ import net.byteabyte.mobiletv.data.network.retrofit.show_details.JsonShowDetails
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-class TopRatedShowDetailsParsingTest {
+class ShowSummaryDetailsParsingTest {
 
     @Test
     fun `Show details responses can be parsed to show details`() {

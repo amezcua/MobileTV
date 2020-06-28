@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
+import net.byteabyte.mobiletv.ShowClickData
 import net.byteabyte.mobiletv.databinding.ActivityTopRatedShowsBinding
 import net.byteabyte.mobiletv.showdetails.ShowDetailsActivity
 
@@ -50,11 +51,11 @@ class TopRatedActivity : AppCompatActivity() {
         topRatedBinding.loadingOverlay.hide()
     }
 
-    private fun onShowClick(topRatedClickData: TopRatedClickData) {
+    private fun onShowClick(topRatedClickData: ShowClickData) {
         ShowDetailsActivity.start(
             context = this,
-            showId = topRatedClickData.topRatedShow.id,
-            backdropUrl = topRatedClickData.topRatedDisplayedImage.orEmpty(),
+            showId = topRatedClickData.showSummary.id,
+            backdropUrl = topRatedClickData.displayedImage.orEmpty(),
             sharedTransitions = topRatedClickData.sharedTransitions
         )
     }

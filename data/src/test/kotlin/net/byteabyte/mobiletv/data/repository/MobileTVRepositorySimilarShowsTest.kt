@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
-import net.byteabyte.mobiletv.core.Repository.RepositoryResult
+import net.byteabyte.mobiletv.core.Repository
 import net.byteabyte.mobiletv.core.Repository.RepositoryResult.Error
 import net.byteabyte.mobiletv.data.MobileTVRepository
 import net.byteabyte.mobiletv.data.network.TMDBNetwork
@@ -21,9 +21,10 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 @ExperimentalCoroutinesApi
-internal class MobileTVRepositoryTopRatedTest {
+internal class MobileTVRepositorySimilarShowsTest {
 
     private val testDispatcher = TestCoroutineDispatcher()
     private val tmdbNetwork: TMDBNetwork = mock()
@@ -46,9 +47,9 @@ internal class MobileTVRepositoryTopRatedTest {
     fun `On configuration request unauthorised return authentication error`() = runBlockingTest {
         whenever(tmdbNetwork.requestImagesConfiguration()).thenReturn(Unauthorised)
 
-        val topRated = buildRepository().getTopRated(1)
+        val similarShows = buildRepository().getSimilarShows(1, 1)
 
-        assertEquals(Error.AuthenticationError, topRated)
+        assertEquals(Error.AuthenticationError, similarShows)
     }
 
     @Test
@@ -56,9 +57,9 @@ internal class MobileTVRepositoryTopRatedTest {
         val apiError = TMDBNetworkResponse.ApiError(RuntimeException("An api error"))
         whenever(tmdbNetwork.requestImagesConfiguration()).thenReturn(apiError)
 
-        val topRated = buildRepository().getTopRated(1)
+        val similarShows = buildRepository().getSimilarShows(1, 1)
 
-        assertEquals(Error.ServerError(apiError.error), topRated)
+        assertEquals(Error.ServerError(apiError.error), similarShows)
     }
 
     @Test
@@ -66,61 +67,61 @@ internal class MobileTVRepositoryTopRatedTest {
         val apiError = TMDBNetworkResponse.ServerError(RuntimeException("A server error"))
         whenever(tmdbNetwork.requestImagesConfiguration()).thenReturn(apiError)
 
-        val topRated = buildRepository().getTopRated(1)
+        val similarShows = buildRepository().getSimilarShows(1, 1)
 
-        assertEquals(Error.ServerError(apiError.error), topRated)
+        assertEquals(Error.ServerError(apiError.error), similarShows)
     }
 
     @Test
-    fun `On top rated unauthorised return authentication error`() = runBlockingTest {
-        whenever(tmdbNetwork.requestTopRated(any())).thenReturn(Unauthorised)
+    fun `On unauthorised return authentication error`() = runBlockingTest {
+        whenever(tmdbNetwork.requestSimilarShows(any(), any())).thenReturn(Unauthorised)
 
-        val topRated = buildRepository().getTopRated(1)
+        val similarShows = buildRepository().getSimilarShows(1, 1)
 
-        assertEquals(Error.AuthenticationError, topRated)
+        assertEquals(Error.AuthenticationError, similarShows)
     }
 
     @Test
-    fun `On top rated api error return server error`() = runBlockingTest {
+    fun `On api error return server error`() = runBlockingTest {
         val apiError = TMDBNetworkResponse.ApiError(RuntimeException("An api error"))
-        whenever(tmdbNetwork.requestTopRated(any())).thenReturn(apiError)
+        whenever(tmdbNetwork.requestSimilarShows(any(), any())).thenReturn(apiError)
 
-        val topRated = buildRepository().getTopRated(1)
+        val similarShows = buildRepository().getSimilarShows(1, 1)
 
-        assertEquals(Error.ServerError(apiError.error), topRated)
+        assertEquals(Error.ServerError(apiError.error), similarShows)
     }
 
     @Test
-    fun `On top rated server error return server error`() = runBlockingTest {
+    fun `On server error return server error`() = runBlockingTest {
         val apiError = TMDBNetworkResponse.ServerError(RuntimeException("An api error"))
-        whenever(tmdbNetwork.requestTopRated(any())).thenReturn(apiError)
+        whenever(tmdbNetwork.requestSimilarShows(any(), any())).thenReturn(apiError)
 
-        val topRated = buildRepository().getTopRated(1)
+        val similarShows = buildRepository().getSimilarShows(1, 1)
 
-        assertEquals(Error.ServerError(apiError.error), topRated)
+        assertEquals(Error.ServerError(apiError.error), similarShows)
     }
 
     @Test
-    fun `On top rated success return the top rates with the images configured`() = runBlockingTest {
+    fun `On success return the top rates with the images configured`() = runBlockingTest {
         val configuration = aValidImagesConfiguration()
-        val topRatedPageResult = aNetworkResponseShowsPage()
+        val similarShowsPageResult = aNetworkResponseShowsPage()
         whenever(tmdbNetwork.requestImagesConfiguration()).thenReturn(TMDBNetworkResponse.Success(configuration))
-        whenever(tmdbNetwork.requestTopRated(any())).thenReturn(TMDBNetworkResponse.Success(topRatedPageResult))
+        whenever(tmdbNetwork.requestSimilarShows(any(), any())).thenReturn(TMDBNetworkResponse.Success(similarShowsPageResult))
 
-        val topRated = buildRepository().getTopRated(1) as RepositoryResult.Success
+        val similarShows = buildRepository().getSimilarShows(1, Random().nextInt()) as Repository.RepositoryResult.Success
 
-        assertEquals(topRatedPageResult.page, topRated.data.page)
-        assertEquals(topRatedPageResult.totalPages, topRated.data.pagesCount)
-        assertEquals(topRatedPageResult.totalResults, topRated.data.showsCount)
-        assertEquals(topRatedPageResult.shows.size, topRated.data.results.size)
-        topRated.data.results.forEach { show ->
+        assertEquals(similarShowsPageResult.page, similarShows.data.page)
+        assertEquals(similarShowsPageResult.totalPages, similarShows.data.pagesCount)
+        assertEquals(similarShowsPageResult.totalResults, similarShows.data.showsCount)
+        assertEquals(similarShowsPageResult.shows.size, similarShows.data.results.size)
+        similarShows.data.results.forEach { show ->
             show.posterImages.forEach { posterImage ->
-                val posterUrl = topRatedPageResult.shows.first { it.id == show.id }.posterImage
+                val posterUrl = similarShowsPageResult.shows.first { it.id == show.id }.posterImage
                 assertEquals("${configuration.baseUrl}${posterImage.key}$posterUrl", posterImage.value)
             }
 
             show.backdropImages.forEach { backdropImage ->
-                val backdropUrl = topRatedPageResult.shows.first { it.id == show.id }.backdropImage
+                val backdropUrl = similarShowsPageResult.shows.first { it.id == show.id }.backdropImage
                 assertEquals("${configuration.baseUrl}${backdropImage.key}$backdropUrl", backdropImage.value)
             }
         }

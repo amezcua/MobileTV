@@ -2,4 +2,6 @@
     <string name="app_name">MobileTV</string>
     <string name="loading_top_rated">Loading Top Rated Shows …</string>
     <string name="error_loading_show_details">There was an error loading the requested show details.</string>
+    <string name="similar_shows">Similar shows</string>
+    <string name="more_information">More information</string>
 </resources>

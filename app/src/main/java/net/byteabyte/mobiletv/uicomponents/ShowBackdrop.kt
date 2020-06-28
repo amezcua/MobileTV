@@ -2,30 +2,26 @@ package net.byteabyte.mobiletv.uicomponents
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnLayout
-import com.bumptech.glide.GenericTransitionOptions.withNoTransition
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.request.transition.NoTransition
 import dagger.hilt.android.AndroidEntryPoint
 import jp.wasabeef.glide.transformations.BlurTransformation
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
-import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
+import net.byteabyte.mobiletv.core.tvshows.paged.ShowSummary
 import net.byteabyte.mobiletv.databinding.ShowBackdropBinding
 import javax.inject.Inject
 
@@ -43,12 +39,12 @@ class ShowBackdrop @JvmOverloads constructor(
     private val showBackdropBinding: ShowBackdropBinding =
         ShowBackdropBinding.inflate(LayoutInflater.from(context), this, true)
 
-    fun render(topRatedShow: TopRatedShow) {
+    fun render(showSummary: ShowSummary) {
         if (viewIsMeasured(showBackdropBinding.backdropImageView)) {
-            loadImage(topRatedShow)
+            loadImage(showSummary)
         } else {
             doOnLayout {
-                loadImage(topRatedShow)
+                loadImage(showSummary)
             }
         }
     }
@@ -104,8 +100,8 @@ class ShowBackdrop @JvmOverloads constructor(
 
     }
 
-    private fun loadImage(topRatedShow: TopRatedShow) {
-        displayedImageUrl = pickBestBackdropImage(topRatedShow, showImagePicker)
+    private fun loadImage(showSummary: ShowSummary) {
+        displayedImageUrl = pickBestBackdropImage(showSummary, showImagePicker)
         loadImage(displayedImageUrl)
     }
 
@@ -120,11 +116,11 @@ class ShowBackdrop @JvmOverloads constructor(
     private fun viewIsMeasured(view: ImageView): Boolean =
         view.measuredWidth != 0 && view.measuredHeight != 0
 
-    private fun pickBestBackdropImage(topRatedShow: TopRatedShow, showImagePicker: ShowImagePicker): ImageUrl? {
+    private fun pickBestBackdropImage(showSummary: ShowSummary, showImagePicker: ShowImagePicker): ImageUrl? {
         if (this.measuredHeight == 0 && this.measuredHeight == 0) this.invalidate()
 
         val bestImage = showImagePicker.pickBestImage(
-            listOf(topRatedShow.backdropImages, topRatedShow.posterImages),
+            listOf(showSummary.backdropImages, showSummary.posterImages),
             this.measuredWidth
         )
         return when (bestImage) {

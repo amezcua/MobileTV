@@ -9,7 +9,6 @@ import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
-import net.byteabyte.mobiletv.data.network.TMDBNetworkResponse.Success
 import net.byteabyte.mobiletv.data.network.retrofit.InvalidApiResponseException
 import net.byteabyte.mobiletv.data.network.retrofit.TMDBApi
 import org.junit.jupiter.api.AfterEach
@@ -17,9 +16,10 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.*
 
 @ExperimentalCoroutinesApi
-internal class TMDBNetworkTopRatedTest {
+internal class TMDBNetworkSimilarShowsTest {
     private val testDispatcher = TestCoroutineDispatcher()
     private val tmdbApi: TMDBApi = mock()
 
@@ -37,9 +37,10 @@ internal class TMDBNetworkTopRatedTest {
     @Test
     fun `A 400 API response returns api error`() = runBlockingTest {
         val error = a400Error()
-        whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
+        whenever(tmdbApi.similarShows(any(), any(), any())).thenThrow(error)
 
-        val result = buildTmdbNetwork(tmdbApi).requestTopRated(1)
+        val result =
+            buildTmdbNetwork(tmdbApi).requestSimilarShows(1, Random().nextInt())
 
         assertEquals(TMDBNetworkResponse.ApiError(error), result)
     }
@@ -47,9 +48,10 @@ internal class TMDBNetworkTopRatedTest {
     @Test
     fun `A 401 API response returns unauthorized`() = runBlockingTest {
         val error = a401Error()
-        whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
+        whenever(tmdbApi.similarShows(any(), any(), any())).thenThrow(error)
 
-        val result = buildTmdbNetwork(tmdbApi).requestTopRated(1)
+        val result =
+            buildTmdbNetwork(tmdbApi).requestSimilarShows(1, Random().nextInt())
 
         assertEquals(TMDBNetworkResponse.Unauthorised, result)
     }
@@ -57,9 +59,10 @@ internal class TMDBNetworkTopRatedTest {
     @Test
     fun `A 500 API response returns server error`() = runBlockingTest {
         val error = a500Error()
-        whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
+        whenever(tmdbApi.similarShows(any(), any(), any())).thenThrow(error)
 
-        val result = buildTmdbNetwork(tmdbApi).requestTopRated(1)
+        val result =
+            buildTmdbNetwork(tmdbApi).requestSimilarShows(1, Random().nextInt())
 
         assertEquals(TMDBNetworkResponse.ServerError(error), result)
     }
@@ -67,9 +70,10 @@ internal class TMDBNetworkTopRatedTest {
     @Test
     fun `An unknown error returns server error`() = runBlockingTest {
         val error = RuntimeException()
-        whenever(tmdbApi.topRatedTvShows(any(), any())).thenThrow(error)
+        whenever(tmdbApi.similarShows(any(), any(), any())).thenThrow(error)
 
-        val result = buildTmdbNetwork(tmdbApi).requestTopRated(1)
+        val result =
+            buildTmdbNetwork(tmdbApi).requestSimilarShows(1, Random().nextInt())
 
         assertEquals(TMDBNetworkResponse.ServerError(error), result)
     }
@@ -77,13 +81,11 @@ internal class TMDBNetworkTopRatedTest {
     @Test
     fun `An invalid response returns invalid api error`() = runBlockingTest {
         whenever(
-            tmdbApi.topRatedTvShows(
-                any(),
-                any()
-            )
+            tmdbApi.similarShows(any(), any(), any())
         ).thenReturn(anInvalidJsonPagedShowsResult())
 
-        val result = buildTmdbNetwork(tmdbApi).requestTopRated(1)
+        val result =
+            buildTmdbNetwork(tmdbApi).requestSimilarShows(1, Random().nextInt())
 
         val error = (result as TMDBNetworkResponse.ServerError).error
         assertTrue(error is InvalidApiResponseException)
@@ -92,9 +94,11 @@ internal class TMDBNetworkTopRatedTest {
     @Test
     fun `An valid response returns the valid mapped response`() = runBlockingTest {
         val validResponse = aValidJsonPagedShowsResult()
-        whenever(tmdbApi.topRatedTvShows(any(), any())).thenReturn(validResponse)
+        whenever(tmdbApi.similarShows(any(), any(), any())).thenReturn(validResponse)
 
-        val responsePage = (buildTmdbNetwork(tmdbApi).requestTopRated(1) as Success).data
+        val responsePage =
+            (buildTmdbNetwork(tmdbApi).requestSimilarShows(1, Random().nextInt()) as
+                    TMDBNetworkResponse.Success).data
 
         assertEquals(responsePage.page, validResponse.page)
         assertEquals(responsePage.totalPages, validResponse.totalPages)

@@ -5,7 +5,7 @@ import net.byteabyte.mobiletv.core.Repository.PagedResult
 import net.byteabyte.mobiletv.core.Repository.RepositoryResult
 import net.byteabyte.mobiletv.core.tvshows.ShowId
 import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
-import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
+import net.byteabyte.mobiletv.core.tvshows.paged.ShowSummary
 import net.byteabyte.mobiletv.data.network.TMDBNetwork
 import net.byteabyte.mobiletv.data.network.TMDBNetworkResponse
 import net.byteabyte.mobiletv.data.network.TMDBNetworkResponse.*
@@ -17,7 +17,7 @@ class MobileTVRepository @Inject constructor(private val tmdbNetwork: TMDBNetwor
 
     private var imagesConfigurationNetwork: ImagesConfigurationNetwork? = null
 
-    override suspend fun getTopRated(pageNumber: Int): RepositoryResult<PagedResult<TopRatedShow>> {
+    override suspend fun getTopRated(pageNumber: Int): RepositoryResult<PagedResult<ShowSummary>> {
         val configuration = cachedOrRequest()
         if (configuration !is Success<ImagesConfigurationNetwork>) return configurationError(configuration)
 
@@ -39,8 +39,6 @@ class MobileTVRepository @Inject constructor(private val tmdbNetwork: TMDBNetwor
         val configuration = cachedOrRequest()
         if (configuration !is Success<ImagesConfigurationNetwork>) return configurationError(configuration)
 
-        println("Invoked: Repository.getShowDetails $showId")
-
         return when (val tmdbNetworkResponse = tmdbNetwork.requestShowDetails(showId)) {
             is Unauthorised -> RepositoryResult.Error.AuthenticationError
             is ApiError -> RepositoryResult.Error.ServerError(tmdbNetworkResponse.error)
@@ -48,6 +46,24 @@ class MobileTVRepository @Inject constructor(private val tmdbNetwork: TMDBNetwor
             is Success -> RepositoryResult.Success(
                 tmdbNetworkResponse.data.toShowDetails(configuration.data)
             )
+        }
+    }
+
+    override suspend fun getSimilarShows(showId: ShowId, pageNumber: Int): RepositoryResult<PagedResult<ShowSummary>> {
+        val configuration = cachedOrRequest()
+        if (configuration !is Success<ImagesConfigurationNetwork>) return configurationError(configuration)
+
+        return when (val similarShows = tmdbNetwork.requestSimilarShows(pageNumber, showId)) {
+            is Success -> {
+                val shows = similarShows.data.shows.map { it.toShow(configuration.data) }
+                val page = similarShows.data.page
+                val showsCount = similarShows.data.totalResults
+                val pagesCount = similarShows.data.totalPages
+                RepositoryResult.Success(PagedResult(page, showsCount, pagesCount, shows))
+            }
+            is Unauthorised -> RepositoryResult.Error.AuthenticationError
+            is ApiError -> RepositoryResult.Error.ServerError(similarShows.error)
+            is ServerError -> RepositoryResult.Error.ServerError(similarShows.error)
         }
     }
 
