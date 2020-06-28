@@ -1,33 +1,22 @@
 package net.byteabyte.mobiletv.core.tvshows
 
-import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.Location
-import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.Location.TOP_RATED_LIST_BG
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult.Image
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult.Placeholder
-import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import kotlin.math.abs
 
 internal class ShowImagePickerImpl : ShowImagePicker {
     override fun pickBestImage(
-        topRatedShow: TopRatedShow,
-        location: Location,
-        imageWidth: Pixels
-    ): PickImageResult = when (location) {
-        TOP_RATED_LIST_BG -> pickInOrder(topRatedShow.backdropImages, topRatedShow.posterImages, imageWidth)
-    }
-
-    private fun pickInOrder(
-        first: ImagesMap,
-        second: ImagesMap,
+        imageMaps: List<ImagesMap>,
         imageWidth: Pixels
     ): PickImageResult {
-        val bestFromFist = pickBestFrom(first, imageWidth)
-        return if (bestFromFist != Placeholder) {
-            bestFromFist
-        } else {
-            pickBestFrom(second, imageWidth)
+        imageMaps.forEach {
+            val picked = pickBestFrom(it, imageWidth)
+            if (picked != Placeholder) {
+                return picked
+            }
         }
+        return Placeholder
     }
 
     private fun pickBestFrom(imagesMap: ImagesMap, imageWidth: Pixels): PickImageResult =

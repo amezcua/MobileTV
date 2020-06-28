@@ -71,8 +71,7 @@ class ShowBackdrop @JvmOverloads constructor(
         if (this.measuredHeight == 0 && this.measuredHeight == 0) this.invalidate()
 
         val bestImage = showImagePicker.pickBestImage(
-            topRatedShow,
-            Location.TOP_RATED_LIST_BG,
+            listOf(topRatedShow.backdropImages, topRatedShow.posterImages),
             this.measuredWidth
         )
         return when (bestImage) {

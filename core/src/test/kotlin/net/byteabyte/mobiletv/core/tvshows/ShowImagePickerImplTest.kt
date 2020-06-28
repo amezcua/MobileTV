@@ -1,8 +1,6 @@
 package net.byteabyte.mobiletv.core.tvshows
 
-import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.Location.TOP_RATED_LIST_BG
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
-import net.byteabyte.mobiletv.core.tvshows.top_rated.ImagesMap
 import net.byteabyte.mobiletv.core.tvshows.top_rated.TopRatedShow
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -15,7 +13,7 @@ internal class ShowImagePickerImplTest {
         val show = aShow()
         val showImagePicker = ShowImagePickerImpl()
 
-        val best = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 10)
+        val best = showImagePicker.pickBestImage(listOf(show.backdropImages, show.posterImages) , 10)
 
         assertEquals(PickImageResult.Placeholder, best)
     }
@@ -26,7 +24,7 @@ internal class ShowImagePickerImplTest {
         val show = aShow(posterImages = hashMapOf("default" to posterUrl))
         val showImagePicker = ShowImagePickerImpl()
 
-        val best = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 10)
+        val best = showImagePicker.pickBestImage(listOf(show.backdropImages, show.posterImages) , 10)
 
         assertEquals(PickImageResult.Image(posterUrl), best)
     }
@@ -37,7 +35,7 @@ internal class ShowImagePickerImplTest {
         val show = aShow(backdropImages = hashMapOf("default" to backdropUrl))
         val showImagePicker = ShowImagePickerImpl()
 
-        val best = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 10)
+        val best = showImagePicker.pickBestImage(listOf(show.backdropImages, show.posterImages) , 10)
 
         assertEquals(PickImageResult.Image(backdropUrl), best)
     }
@@ -53,12 +51,12 @@ internal class ShowImagePickerImplTest {
         ))
         val showImagePicker = ShowImagePickerImpl()
 
-        val best92 = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 90) as PickImageResult.Image
-        val best195 = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 195) as PickImageResult.Image
-        val best490 = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 490) as PickImageResult.Image
-        val best1280 = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 1280) as PickImageResult.Image
-        val best150 = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 150) as PickImageResult.Image
-        val best48 = showImagePicker.pickBestImage(show, TOP_RATED_LIST_BG, 48) as PickImageResult.Image
+        val best92 = showImagePicker.pickBestImage(listOf(show.backdropImages), 90) as PickImageResult.Image
+        val best195 = showImagePicker.pickBestImage(listOf(show.backdropImages), 195) as PickImageResult.Image
+        val best490 = showImagePicker.pickBestImage(listOf(show.backdropImages), 490) as PickImageResult.Image
+        val best1280 = showImagePicker.pickBestImage(listOf(show.backdropImages), 1280) as PickImageResult.Image
+        val best150 = showImagePicker.pickBestImage(listOf(show.backdropImages), 150) as PickImageResult.Image
+        val best48 = showImagePicker.pickBestImage(listOf(show.backdropImages), 48) as PickImageResult.Image
 
         assertEquals("92url", best92.url)
         assertEquals("185url", best195.url)
