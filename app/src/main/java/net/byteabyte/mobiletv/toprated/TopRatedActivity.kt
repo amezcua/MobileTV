@@ -1,6 +1,5 @@
 package net.byteabyte.mobiletv.toprated
 
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
