@@ -1,4 +1,4 @@
-package net.byteabyte.mobiletv.showdetails
+package net.byteabyte.mobiletv.showdetails.similar_shows
 
 import android.util.Pair
 import android.view.View

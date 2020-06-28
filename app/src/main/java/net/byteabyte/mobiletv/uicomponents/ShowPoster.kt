@@ -13,6 +13,7 @@ import net.byteabyte.mobiletv.core.tvshows.ImageUrl
 import net.byteabyte.mobiletv.core.tvshows.ImagesMap
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker.PickImageResult
+import net.byteabyte.mobiletv.core.tvshows.details.Season
 import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
 import net.byteabyte.mobiletv.core.tvshows.paged.ShowSummary
 import net.byteabyte.mobiletv.databinding.ShowPosterBinding
@@ -51,12 +52,38 @@ class ShowPoster @JvmOverloads constructor(
         }
     }
 
+    fun render(season: Season) {
+        if (viewIsMeasured(showPosterBinding.posterImageView)) {
+            loadImage(season)
+        } else {
+            doOnLayout {
+                loadImage(season)
+            }
+        }
+    }
+
     private fun loadImage(showDetails: ShowDetails) {
-        loadImage(pickBestPosterImage(showDetails, showImagePicker))
+        loadImage(
+            pickBestPosterImage(
+                listOf(showDetails.posterImages, showDetails.backdropImages),
+                showImagePicker
+            )
+        )
     }
 
     private fun loadImage(showSummary: ShowSummary) {
-        loadImage(pickBestPosterImage(showSummary, showImagePicker))
+        loadImage(
+            pickBestPosterImage(
+                listOf(showSummary.posterImages, showSummary.backdropImages),
+                showImagePicker
+            )
+        )
+    }
+
+    private fun loadImage(season: Season) {
+        loadImage(
+            pickBestPosterImage(listOf(season.posterImages), showImagePicker)
+        )
     }
 
     private fun loadImage(imageUrl: ImageUrl?) {
@@ -71,24 +98,6 @@ class ShowPoster @JvmOverloads constructor(
 
     private fun viewIsMeasured(view: ImageView): Boolean =
         view.measuredWidth != 0 && view.measuredHeight != 0
-
-    private fun pickBestPosterImage(
-        showDetails: ShowDetails,
-        showImagePicker: ShowImagePicker
-    ): ImageUrl? =
-        pickBestPosterImage(
-            listOf(showDetails.posterImages, showDetails.backdropImages),
-            showImagePicker
-        )
-
-    private fun pickBestPosterImage(
-        showSummary: ShowSummary,
-        showImagePicker: ShowImagePicker
-    ): ImageUrl? =
-        pickBestPosterImage(
-            listOf(showSummary.posterImages, showSummary.backdropImages),
-            showImagePicker
-        )
 
     private fun pickBestPosterImage(
         imageMaps: List<ImagesMap>,

@@ -4,4 +4,6 @@
     <string name="error_loading_show_details">There was an error loading the requested show details.</string>
     <string name="similar_shows">Similar shows</string>
     <string name="more_information">More information</string>
+    <string name="seasons">Seasons (%1$d)</string>
+    <string name="episodes">Episodes: %1$d</string>
 </resources>

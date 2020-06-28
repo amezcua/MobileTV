@@ -80,6 +80,32 @@
             tools:text="A show description" />
 
         <TextView
+            android:id="@+id/seasonsTitle"
+            style="@style/TextAppearance.MdcTypographyStyles.Headline6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/grid_2"
+            android:layout_marginTop="@dimen/grid_4"
+            android:layout_marginEnd="@dimen/grid_2"
+            android:text="@string/seasons"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/showDetailsDescriptionTextView"
+            tools:visibility="visible" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/seasonsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/seasonsTitle"
+            tools:listitem="@layout/season_item" />
+
+        <TextView
             android:id="@+id/similarShowsTitle"
             style="@style/TextAppearance.MdcTypographyStyles.Headline6"
             android:layout_width="match_parent"
@@ -90,7 +116,7 @@
             android:text="@string/similar_shows"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/showDetailsDescriptionTextView"
+            app:layout_constraintTop_toBottomOf="@id/seasonsRecyclerView"
             tools:visibility="visible" />
 
         <androidx.recyclerview.widget.RecyclerView

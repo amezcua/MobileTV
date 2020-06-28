@@ -48,4 +48,16 @@
     <style name="SimilarShowName" parent="TextAppearance.MdcTypographyStyles.Body1">
         <item name="android:textColor">@color/secondaryTextColor</item>
     </style>
+
+    <style name="SimilarShowDescription" parent="TextAppearance.MdcTypographyStyles.Body2">
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
+
+    <style name="SeasonName" parent="TextAppearance.MdcTypographyStyles.Body1">
+        <item name="android:textColor">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="SeasonDescription" parent="TextAppearance.MdcTypographyStyles.Caption">
+        <item name="android:lineSpacingMultiplier">1.2</item>
+    </style>
 </resources>

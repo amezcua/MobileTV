@@ -10,7 +10,6 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.transition.doOnEnd
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -23,9 +22,12 @@ import net.byteabyte.mobiletv.ShowClickData
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
 import net.byteabyte.mobiletv.core.tvshows.ShowId
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
+import net.byteabyte.mobiletv.core.tvshows.details.Season
 import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
 import net.byteabyte.mobiletv.databinding.ActivityShowDetailsBinding
 import net.byteabyte.mobiletv.extra
+import net.byteabyte.mobiletv.showdetails.seasons.SeasonsAdapter
+import net.byteabyte.mobiletv.showdetails.similar_shows.SimilarShowsAdapter
 import net.byteabyte.mobiletv.uicomponents.ShowRating
 import javax.inject.Inject
 
@@ -37,6 +39,7 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private val showId: ShowId by extra(EXTRA_SHOW_ID)
     private val backdropUrl: ImageUrl by extra(EXTRA_BACKDROP_IMAGE_URL)
+    private val seasonsAdapter = SeasonsAdapter()
     private val similarShowsAdapter = SimilarShowsAdapter(::onSimilarShowClick)
     private lateinit var showDetailsBinding: ActivityShowDetailsBinding
     private val viewModel by viewModels<ShowDetailsViewModel>()
@@ -47,8 +50,14 @@ class ShowDetailsActivity : AppCompatActivity() {
         setContentView(showDetailsBinding.root)
 
         configureSimilarShowsRecyclerView()
+        configureSeasonsRecyclerView()
         setupEnterTransition()
         setupBackButton()
+    }
+
+    override fun onEnterAnimationComplete() {
+        super.onEnterAnimationComplete()
+
         observeViewModel()
     }
 
@@ -64,11 +73,9 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        window.sharedElementEnterTransition.doOnEnd {
-            observeShowDetails()
-            viewModel.loadShow(showId)
-            observeSimilarShows()
-        }
+        observeShowDetails()
+        viewModel.loadShow(showId)
+        observeSimilarShows()
     }
 
     private fun observeShowDetails() {
@@ -96,6 +103,7 @@ class ShowDetailsActivity : AppCompatActivity() {
             showDetailsTitleTextView.text = showDetails.name
             showDetailsDescriptionTextView.text = showDetails.description
             renderRating(showDetails)
+            renderSeasons(showDetails.seasons)
             similarShowsTitle.isVisible = true
             renderMoreInformation(showDetails)
         }
@@ -109,6 +117,13 @@ class ShowDetailsActivity : AppCompatActivity() {
                 showDetails.totalVotes
             )
         ).apply { isVisible = true }
+    }
+
+    private fun renderSeasons(seasons: List<Season>) {
+        seasonsTitle.isVisible = seasons.isNotEmpty()
+        seasonsRecyclerView.isVisible = seasons.isNotEmpty()
+        seasonsTitle.text = getString(R.string.seasons, seasons.size)
+        seasonsAdapter.submitList(seasons)
     }
 
     private fun renderMoreInformation(showDetails: ShowDetails) {
@@ -125,6 +140,10 @@ class ShowDetailsActivity : AppCompatActivity() {
             LinearSnapHelper().attachToRecyclerView(this)
             adapter = similarShowsAdapter
         }
+    }
+
+    private fun configureSeasonsRecyclerView() {
+        seasonsRecyclerView.adapter = seasonsAdapter
     }
 
     private fun onSimilarShowClick(show: ShowClickData) {

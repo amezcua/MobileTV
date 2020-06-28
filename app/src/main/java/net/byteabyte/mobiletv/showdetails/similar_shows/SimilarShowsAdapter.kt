@@ -1,4 +1,4 @@
-package net.byteabyte.mobiletv.showdetails
+package net.byteabyte.mobiletv.showdetails.similar_shows
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
