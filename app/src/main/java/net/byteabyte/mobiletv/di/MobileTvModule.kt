@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ApplicationComponent
 import net.byteabyte.mobiletv.BuildConfig
 import net.byteabyte.mobiletv.core.Repository
 import net.byteabyte.mobiletv.core.di.CoreModule
@@ -16,12 +16,14 @@ import net.byteabyte.mobiletv.data.network.retrofit.TMDBApi
 import net.byteabyte.mobiletv.utils.NetworkUtils
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Singleton
 
-@InstallIn(ActivityComponent::class)
+@InstallIn(ApplicationComponent::class)
 @Module(includes = [CoreModule::class])
 object MobileTvModule {
 
     @Provides
+    @Singleton
     fun provideTmdbApi(): TMDBApi {
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
@@ -36,13 +38,15 @@ object MobileTvModule {
     }
 
     @Provides
+    @Singleton
     fun provideTMDBNetwork(tmdbApi: TMDBApi): TMDBNetwork =
         TMDBNetwork(BuildConfig.TMDB_API_KEY, tmdbApi)
 
     @Module
-    @InstallIn(ActivityComponent::class)
+    @InstallIn(ApplicationComponent::class)
     interface BindFunctions {
         @Binds
+        @Singleton
         fun bindRepository(mobileTVRepository: MobileTVRepository): Repository
     }
 }
