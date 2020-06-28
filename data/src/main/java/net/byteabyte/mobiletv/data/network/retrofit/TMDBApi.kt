@@ -19,7 +19,7 @@ interface TMDBApi {
         @Query("api_key") apiKey: String
     ): JsonConfigurationResponse
 
-    @GET("/3/{show_id}")
+    @GET("/3/tv/{show_id}")
     suspend fun showDetails(
         @Path("show_id") showId: Int,
         @Query("api_key") apiKey: String

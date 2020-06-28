@@ -36,7 +36,7 @@ class TMDBNetwork(private val apiKey: String, private val tmdbApi: TMDBApi) {
         return try {
             val detailsNetwork = tmdbApi.showDetails(showId, apiKey).toShowDetailsNetwork()
             if (detailsNetwork.isValid()) {
-                Success(tmdbApi.showDetails(showId, apiKey).toShowDetailsNetwork())
+                Success(detailsNetwork)
             } else {
                 ApiError(InvalidApiResponseException(RuntimeException(), "The show data received for id: $showId is not valid"))
             }
