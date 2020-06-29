@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.viewModels
@@ -16,7 +17,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_show_details.*
-import kotlinx.android.synthetic.main.show_backdrop.*
 import net.byteabyte.mobiletv.R
 import net.byteabyte.mobiletv.SharedTransitions
 import net.byteabyte.mobiletv.ShowClickData
@@ -31,6 +31,7 @@ import net.byteabyte.mobiletv.showdetails.seasons.SeasonsAdapter
 import net.byteabyte.mobiletv.showdetails.similar_shows.SimilarShowsAdapter
 import net.byteabyte.mobiletv.uicomponents.ShowRating
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ShowDetailsActivity : AppCompatActivity() {
@@ -50,15 +51,17 @@ class ShowDetailsActivity : AppCompatActivity() {
         showDetailsBinding = ActivityShowDetailsBinding.inflate(layoutInflater)
         setContentView(showDetailsBinding.root)
 
-        configureSimilarShowsRecyclerView()
-        configureSeasonsRecyclerView()
+        supportPostponeEnterTransition()
         setupEnterTransition()
+        configureSimilarShowsRecyclerView()
         setupBackButton()
     }
 
     override fun onEnterAnimationComplete() {
         super.onEnterAnimationComplete()
 
+        similarShowsRecyclerView.adapter = similarShowsAdapter
+        seasonsRecyclerView.adapter = seasonsAdapter
         observeViewModel()
     }
 
@@ -66,9 +69,16 @@ class ShowDetailsActivity : AppCompatActivity() {
         goBack()
     }
 
+    override fun onActivityReenter(resultCode: Int, data: Intent?) {
+        super.onActivityReenter(resultCode, data)
+        supportPostponeEnterTransition()
+    }
+
     private fun setupEnterTransition() {
         ViewCompat.setTransitionName(showBackDropView, showId.toString())
-        showBackDropView.render(backdropUrl)
+        showBackDropView.render(backdropUrl) {
+            scheduleStartPostponedTransition(showBackDropView)
+        }
     }
 
     private fun setupBackButton() {
@@ -153,13 +163,20 @@ class ShowDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun configureSeasonsRecyclerView() {
-        seasonsRecyclerView.adapter = seasonsAdapter
-    }
-
     private fun onSimilarShowClick(show: ShowClickData) {
         showDetailsScrollView.smoothScrollTo(0, 0)
         viewModel.loadShow(show.showSummary.id)
+    }
+
+    private fun scheduleStartPostponedTransition(sharedElement: View) {
+        sharedElement.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    sharedElement.viewTreeObserver.removeOnPreDrawListener(this)
+                    supportStartPostponedEnterTransition()
+                    return true
+                }
+            })
     }
 
     companion object {

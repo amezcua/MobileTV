@@ -39,22 +39,22 @@ class ShowBackdrop @JvmOverloads constructor(
     private val showBackdropBinding: ShowBackdropBinding =
         ShowBackdropBinding.inflate(LayoutInflater.from(context), this, true)
 
-    fun render(showSummary: ShowSummary) {
+    fun render(showSummary: ShowSummary, onLoaded: () -> Unit = {}) {
         if (viewIsMeasured(showBackdropBinding.backdropImageView)) {
-            loadImage(showSummary)
+            loadImage(showSummary, onLoaded)
         } else {
             doOnLayout {
-                loadImage(showSummary)
+                loadImage(showSummary, onLoaded)
             }
         }
     }
 
-    fun render(imageUrl: ImageUrl) {
+    fun render(imageUrl: ImageUrl, onLoaded: () -> Unit = {}) {
         if (viewIsMeasured(showBackdropBinding.backdropImageView)) {
-            loadImage(imageUrl)
+            loadImage(imageUrl, onLoaded)
         } else {
             doOnLayout {
-                loadImage(imageUrl)
+                loadImage(imageUrl, onLoaded)
             }
         }
     }
@@ -83,22 +83,24 @@ class ShowBackdrop @JvmOverloads constructor(
             .asBitmap()
             .load(displayedImageUrl)
             .placeholder(showBackdropBinding.backdropImageView.drawable)
+            .centerCrop()
             .transition(withCrossFade())
             .addListener(GlideCallbackRequestListener(onUnBlurred))
             .into(showBackdropBinding.backdropImageView)
     }
 
-    private fun loadImage(showSummary: ShowSummary) {
+    private fun loadImage(showSummary: ShowSummary, onLoaded: () -> Unit) {
         displayedImageUrl = pickBestBackdropImage(showSummary, showImagePicker)
-        loadImage(displayedImageUrl)
+        loadImage(displayedImageUrl, onLoaded)
     }
 
-    private fun loadImage(imageUrl: ImageUrl?) {
+    private fun loadImage(imageUrl: ImageUrl?, onLoaded: () -> Unit) {
         displayedImageUrl = imageUrl
         Glide.with(this)
+            .asBitmap()
             .load(imageUrl)
             .centerCrop()
-            .apply(RequestOptions().dontTransform())
+            .listener(GlideCallbackRequestListener(onLoaded))
             .into(showBackdropBinding.backdropImageView)
     }
 
