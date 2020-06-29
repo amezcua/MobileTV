@@ -26,12 +26,15 @@ class ShowDetailsViewModel @ViewModelInject constructor(
     private val _showDetails: MutableLiveData<ShowDetailsState> by lazy { MutableLiveData<ShowDetailsState>() }
     val showDetails: LiveData<ShowDetailsState> = _showDetails
 
-    private val _similarShows: LivePagedListBuilder<Int, ShowSummary> by dataSourceFactory {
+    private val similarShowsDataSourceFactory: SimilarShowsDataSourceFactory by lazy {
         SimilarShowsDataSourceFactory(
             viewModelScope,
             getSimilarShows,
             selectedShowId!!
         )
+    }
+    private val _similarShows: LivePagedListBuilder<Int, ShowSummary> by dataSourceFactory {
+        similarShowsDataSourceFactory
     }
     val similarShows: LiveData<PagedList<ShowSummary>> by lazy { _similarShows.build() }
 
@@ -41,8 +44,10 @@ class ShowDetailsViewModel @ViewModelInject constructor(
             _showDetails.value = when (val showDetailsResult = getShowDetails(showId)) {
                 GetShowDetails.GetShowDetailsResult.Error ->
                     ShowDetailsState.ShowDetailsLoadError
-                is GetShowDetails.GetShowDetailsResult.Success ->
+                is GetShowDetails.GetShowDetailsResult.Success -> {
+                    similarShowsDataSourceFactory.updateShow(showDetailsResult.showDetails.id)
                     ShowDetailsState.ShowReady(showDetailsResult.showDetails)
+                }
             }
         }
     }

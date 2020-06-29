@@ -9,6 +9,7 @@ import androidx.core.view.doOnLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions.withCrossFade
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.show_poster.view.*
 import net.byteabyte.mobiletv.core.tvshows.ImageUrl
 import net.byteabyte.mobiletv.core.tvshows.ImagesMap
 import net.byteabyte.mobiletv.core.tvshows.ShowImagePicker
@@ -91,6 +92,7 @@ class ShowPoster @JvmOverloads constructor(
         Glide.with(this)
             .asBitmap()
             .load(imageUrl)
+            .placeholder(posterImageView.drawable)
             .centerCrop()
             .transition(withCrossFade())
             .into(showPosterBinding.posterImageView)

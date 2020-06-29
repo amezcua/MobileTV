@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearSnapHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_show_details.*
+import kotlinx.android.synthetic.main.show_backdrop.*
 import net.byteabyte.mobiletv.R
 import net.byteabyte.mobiletv.SharedTransitions
 import net.byteabyte.mobiletv.ShowClickData
@@ -39,8 +40,8 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private val showId: ShowId by extra(EXTRA_SHOW_ID)
     private val backdropUrl: ImageUrl by extra(EXTRA_BACKDROP_IMAGE_URL)
-    private val seasonsAdapter = SeasonsAdapter()
-    private val similarShowsAdapter = SimilarShowsAdapter(::onSimilarShowClick)
+    private val seasonsAdapter: SeasonsAdapter by lazy { SeasonsAdapter() }
+    private val similarShowsAdapter: SimilarShowsAdapter by lazy { SimilarShowsAdapter(::onSimilarShowClick) }
     private lateinit var showDetailsBinding: ActivityShowDetailsBinding
     private val viewModel by viewModels<ShowDetailsViewModel>()
 
@@ -61,6 +62,10 @@ class ShowDetailsActivity : AppCompatActivity() {
         observeViewModel()
     }
 
+    override fun onBackPressed() {
+        goBack()
+    }
+
     private fun setupEnterTransition() {
         ViewCompat.setTransitionName(showBackDropView, showId.toString())
         showBackDropView.render(backdropUrl)
@@ -68,6 +73,12 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private fun setupBackButton() {
         gotBackButton.setOnClickListener {
+            goBack()
+        }
+    }
+
+    private fun goBack() {
+        showBackDropView.unBlur {
             supportFinishAfterTransition()
         }
     }
@@ -147,12 +158,8 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun onSimilarShowClick(show: ShowClickData) {
-        start(
-            this,
-            show.showSummary.id,
-            show.displayedImage.orEmpty(),
-            show.sharedTransitions
-        )
+        showDetailsScrollView.smoothScrollTo(0, 0)
+        viewModel.loadShow(show.showSummary.id)
     }
 
     companion object {

@@ -30,16 +30,27 @@ internal class TopRatedShowsDataSourceFactory(
 internal class SimilarShowsDataSourceFactory(
     private val scope: CoroutineScope,
     private val getSimilarShows: GetSimilarShows,
-    private val showId: ShowId
+    private var showId: ShowId
 ) : DataSource.Factory<Int, ShowSummary>() {
-    override fun create(): DataSource<Int, ShowSummary> =
-        ShowSummariesDataSource(scope) { pageNumber: Int -> getSimilarShows(showId, pageNumber) }
+
+    internal lateinit var dataSource: DataSource<Int, ShowSummary>
+
+    override fun create(): DataSource<Int, ShowSummary> {
+        dataSource = ShowSummariesDataSource(scope) { pageNumber: Int -> getSimilarShows(showId, pageNumber) }
+        return dataSource
+    }
+
+    internal fun updateShow(showId: ShowId) {
+        this.showId = showId
+        dataSource.invalidate()
+    }
 }
 
 private class ShowSummariesDataSource(
     val scope: CoroutineScope,
     val summariesRetriever: suspend (Int) -> GetPagedSummariesResult
 ) : PageKeyedDataSource<Int, ShowSummary>() {
+
     override fun loadInitial(
         params: LoadInitialParams<Int>,
         callback: LoadInitialCallback<Int, ShowSummary>

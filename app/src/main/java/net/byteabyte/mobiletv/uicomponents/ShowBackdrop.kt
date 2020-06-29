@@ -72,32 +72,20 @@ class ShowBackdrop @JvmOverloads constructor(
             .placeholder(showBackdropBinding.backdropImageView.drawable)
             .transition(withCrossFade())
             .apply(RequestOptions.bitmapTransform(transformations))
-            .addListener(object :RequestListener<Bitmap> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    onBlurred()
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Bitmap?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    onBlurred()
-                    return false
-                }
-
-            })
+            .addListener(GlideCallbackRequestListener(onBlurred))
             .into(showBackdropBinding.backdropImageView)
             .waitForLayout()
 
+    }
+
+    fun unBlur(onUnBlurred: () -> Unit) {
+        Glide.with(this)
+            .asBitmap()
+            .load(displayedImageUrl)
+            .placeholder(showBackdropBinding.backdropImageView.drawable)
+            .transition(withCrossFade())
+            .addListener(GlideCallbackRequestListener(onUnBlurred))
+            .into(showBackdropBinding.backdropImageView)
     }
 
     private fun loadImage(showSummary: ShowSummary) {
@@ -110,6 +98,7 @@ class ShowBackdrop @JvmOverloads constructor(
         Glide.with(this)
             .load(imageUrl)
             .centerCrop()
+            .apply(RequestOptions().dontTransform())
             .into(showBackdropBinding.backdropImageView)
     }
 
@@ -126,6 +115,29 @@ class ShowBackdrop @JvmOverloads constructor(
         return when (bestImage) {
             is PickImageResult.Placeholder -> null
             is PickImageResult.Image -> bestImage.url
+        }
+    }
+
+    private class GlideCallbackRequestListener(private val callback: () -> Unit) :RequestListener<Bitmap> {
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: Target<Bitmap>?,
+            isFirstResource: Boolean
+        ): Boolean {
+            callback()
+            return false
+        }
+
+        override fun onResourceReady(
+            resource: Bitmap?,
+            model: Any?,
+            target: Target<Bitmap>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
+            callback()
+            return false
         }
     }
 }
