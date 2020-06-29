@@ -1,11 +1,11 @@
-package net.byteabyte.mobiletv.mocked
+package net.byteabyte.mobiletv.mocked.responses
 
 /*
  Local mock response. In a larger non sample project these responses would live in a separate
  json file that is only deployed in the assets directory of private builds and not distributed
  in general like here.
  */
-internal fun topRatedShowsResult(page: Int) = """
+internal fun topRatedShowsResult(page: Int = 1, totalResults: Int = 747, totalPages: Int = 38) = """
     {
   "page": $page,
   "results": [
@@ -421,7 +421,7 @@ internal fun topRatedShowsResult(page: Int) = """
       "original_name": "Fargo"
     }
   ],
-  "total_results": 747,
-  "total_pages": 38
+  "total_results": $totalResults,
+  "total_pages": $totalPages
 }
-"""
+""".trimIndent()

@@ -4,7 +4,7 @@ import net.byteabyte.mobiletv.data.network.retrofit.show_details.JsonShowDetails
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-class ShowSummaryDetailsParsingTest {
+class ShowDetailsParsingTest {
 
     @Test
     fun `Show details responses can be parsed to show details`() {
@@ -24,7 +24,7 @@ class ShowSummaryDetailsParsingTest {
         assertEquals("en", showDetailsNetwork.languages.first())
         assertEquals(34389, showDetailsNetwork.lastEpisode!!.id)
         assertNull(showDetailsNetwork.nextEpisode)
-        assertEquals(56, showDetailsNetwork.networks!!.first().id)
+        assertEquals(56, showDetailsNetwork.networks.first().id)
         assertEquals(65, showDetailsNetwork.episodesCount)
         assertEquals(6, showDetailsNetwork.seasons.size)
         assertEquals("Ended", showDetailsNetwork.status)
