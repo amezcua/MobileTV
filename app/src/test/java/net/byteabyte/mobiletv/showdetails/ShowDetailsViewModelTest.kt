@@ -13,6 +13,7 @@ import net.byteabyte.bankstep.FakeLiveDataObserver
 import net.byteabyte.bankstep.InstantTaskExecutorExtension
 import net.byteabyte.mobiletv.core.tvshows.details.GetShowDetails
 import net.byteabyte.mobiletv.core.tvshows.details.ShowDetails
+import net.byteabyte.mobiletv.core.tvshows.paged.GetSimilarShows
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -25,6 +26,7 @@ import java.util.*
 internal class ShowDetailsViewModelTest {
 
     private val getDetailsUseCase: GetShowDetails = mock()
+    private val getSimilarShowsUseCase: GetSimilarShows = mock()
     private lateinit var viewModel: ShowDetailsViewModel
     private val testDispatcher = TestCoroutineDispatcher()
     private val observer = FakeLiveDataObserver<ShowDetailsViewModel.ShowDetailsState>()
@@ -44,7 +46,7 @@ internal class ShowDetailsViewModelTest {
     @Test
     fun `Should emit error if we can not retrieve the show details`() = runBlockingTest {
         whenever(getDetailsUseCase(any())).thenReturn(GetShowDetails.GetShowDetailsResult.Error)
-        viewModel = buildViewModel(getDetailsUseCase)
+        viewModel = buildViewModel(getDetailsUseCase, getSimilarShowsUseCase)
 
         viewModel.loadShow(Random().nextInt())
 
@@ -55,15 +57,15 @@ internal class ShowDetailsViewModelTest {
     fun `Should emit success with the show details when the show details can be retrieved`() = runBlockingTest {
         val showDetails: ShowDetails = mock()
         whenever(getDetailsUseCase(any())).thenReturn(GetShowDetails.GetShowDetailsResult.Success(showDetails))
-        viewModel = buildViewModel(getDetailsUseCase)
+        viewModel = buildViewModel(getDetailsUseCase, getSimilarShowsUseCase)
 
         viewModel.loadShow(Random().nextInt())
 
         assertEquals(ShowDetailsViewModel.ShowDetailsState.ShowReady(showDetails), observer.onlyObservedItem())
     }
 
-    private fun buildViewModel(getShowDetails: GetShowDetails) =
-        ShowDetailsViewModel(getShowDetails).apply {
+    private fun buildViewModel(getShowDetails: GetShowDetails, getSimilarShows: GetSimilarShows) =
+        ShowDetailsViewModel(getShowDetails, getSimilarShows).apply {
             showDetails.observeForever(observer)
         }
 }

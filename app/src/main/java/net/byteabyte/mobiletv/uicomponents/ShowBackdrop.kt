@@ -74,8 +74,6 @@ class ShowBackdrop @JvmOverloads constructor(
             .apply(RequestOptions.bitmapTransform(transformations))
             .addListener(GlideCallbackRequestListener(onBlurred))
             .into(showBackdropBinding.backdropImageView)
-            .waitForLayout()
-
     }
 
     fun unBlur(onUnBlurred: () -> Unit) {

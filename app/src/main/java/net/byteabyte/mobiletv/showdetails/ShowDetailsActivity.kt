@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.view.ViewTreeObserver
+import android.view.ViewTreeObserver.*
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.viewModels
@@ -52,26 +52,13 @@ class ShowDetailsActivity : AppCompatActivity() {
         setContentView(showDetailsBinding.root)
 
         supportPostponeEnterTransition()
-        setupEnterTransition()
-        configureSimilarShowsRecyclerView()
+        configureRecyclerViews()
         setupBackButton()
-    }
-
-    override fun onEnterAnimationComplete() {
-        super.onEnterAnimationComplete()
-
-        similarShowsRecyclerView.adapter = similarShowsAdapter
-        seasonsRecyclerView.adapter = seasonsAdapter
-        observeViewModel()
+        setupEnterTransition()
     }
 
     override fun onBackPressed() {
         goBack()
-    }
-
-    override fun onActivityReenter(resultCode: Int, data: Intent?) {
-        super.onActivityReenter(resultCode, data)
-        supportPostponeEnterTransition()
     }
 
     private fun setupEnterTransition() {
@@ -82,7 +69,7 @@ class ShowDetailsActivity : AppCompatActivity() {
     }
 
     private fun setupBackButton() {
-        gotBackButton.setOnClickListener {
+        goBackButton.setOnClickListener {
             goBack()
         }
     }
@@ -95,7 +82,9 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         observeShowDetails()
-        viewModel.loadShow(showId)
+        if (viewModel.showDetails.value == null) {
+            viewModel.loadShow(showId)
+        }
         observeSimilarShows()
     }
 
@@ -119,7 +108,7 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private fun renderShow(showDetails: ShowDetails) {
         showBackDropView.blur {
-            gotBackButton.visibility = View.VISIBLE
+            goBackButton.visibility = View.VISIBLE
             showPosterView.render(showDetails)
             showDetailsTitleTextView.text = showDetails.name
             showDetailsDescriptionTextView.text = showDetails.description
@@ -156,7 +145,8 @@ class ShowDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun configureSimilarShowsRecyclerView() {
+    private fun configureRecyclerViews() {
+        seasonsRecyclerView.adapter = seasonsAdapter
         similarShowsRecyclerView.apply {
             LinearSnapHelper().attachToRecyclerView(this)
             adapter = similarShowsAdapter
@@ -170,9 +160,10 @@ class ShowDetailsActivity : AppCompatActivity() {
 
     private fun scheduleStartPostponedTransition(sharedElement: View) {
         sharedElement.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
+            object : OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     sharedElement.viewTreeObserver.removeOnPreDrawListener(this)
+                    observeViewModel()
                     supportStartPostponedEnterTransition()
                     return true
                 }

@@ -39,6 +39,7 @@ class ShowDetailsViewModel @ViewModelInject constructor(
     val similarShows: LiveData<PagedList<ShowSummary>> by lazy { _similarShows.build() }
 
     fun loadShow(showId: ShowId) {
+        clearSimilarList()
         selectedShowId = showId
         viewModelScope.launch {
             _showDetails.value = when (val showDetailsResult = getShowDetails(showId)) {
@@ -49,6 +50,12 @@ class ShowDetailsViewModel @ViewModelInject constructor(
                     ShowDetailsState.ShowReady(showDetailsResult.showDetails)
                 }
             }
+        }
+    }
+
+    private fun clearSimilarList() {
+        if (selectedShowId != null) {
+            similarShowsDataSourceFactory.dataSource.invalidate()
         }
     }
 

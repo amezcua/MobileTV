@@ -41,7 +41,7 @@
             tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/gotBackButton"
+            android:id="@+id/goBackButton"
             style="@style/CircularButton"
             android:layout_width="@dimen/grid_4"
             android:layout_height="@dimen/grid_4"
